@@ -1,0 +1,21 @@
+# The notebook clones these fresh (see the notebook's own §2) -- never vendor
+# external repos here. nemo_gym_multistep_new_files.patch and
+# inference_provider_rollout_id.patch are the actual deliverable: the delta
+# against a fresh clone of each.
+cookbook/
+nemo-gym/
+
+# OS / editor cruft
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Anything that could carry a live key or per-run local state, if ever
+# generated next to these files during a local run.
+.env
+*.key
+env.yaml
+gym_env_demo.log
+gym_env_start.log
+nemo_gym_multistep_logs/

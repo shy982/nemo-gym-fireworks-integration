@@ -1,0 +1,81 @@
+diff --git a/responses_api_models/inference_provider/app.py b/responses_api_models/inference_provider/app.py
+index fd0f7798..c40a571a 100644
+--- a/responses_api_models/inference_provider/app.py
++++ b/responses_api_models/inference_provider/app.py
+@@ -20,11 +20,12 @@ OpenRouter, HF Inference, Gemini and any other OpenAI-compatible provider.
+ For training workloads that require token IDs, use vllm_model instead.
+ """
+ 
++import re
+ from asyncio import Semaphore
+ from time import time
+ from typing import Any, Dict
+ 
+-from fastapi import Request
++from fastapi import FastAPI, Request
+ from pydantic import Field
+ 
+ from nemo_gym.base_responses_api_model import (
+@@ -42,6 +43,29 @@ from nemo_gym.openai_utils import (
+ from nemo_gym.responses_converter import ResponsesConverter
+ from nemo_gym.server_utils import is_nemo_gym_fastapi_entrypoint
+ 
++# NeMo Gym's model-call-capture middleware (_CaptureMiddleware, installed by
++# SimpleResponsesAPIModel.setup_webserver()) strips the `/ng-rollout/<id>`
++# correlation prefix before routing but never calls rollout_context(), so
++# current_rollout_id() is always None on a model server -- that contextvar is
++# only wired up by RolloutContextMiddleware, which base_resources_server.py
++# installs on resources servers, not model servers. Recover the id ourselves,
++# in a middleware added *after* setup_webserver() so it runs *before*
++# _CaptureMiddleware (Starlette: last-added middleware is outermost).
++_ROLLOUT_PREFIX_RE = re.compile(r"^/ng-rollout/(?P<rollout_id>[^/]+)(?P<rest>/.*)$")
++
++
++class _CaptureRolloutIdMiddleware:
++    def __init__(self, app: Any) -> None:
++        self._app = app
++
++    async def __call__(self, scope: dict, receive: Any, send: Any) -> None:
++        if scope.get("type") == "http":
++            match = _ROLLOUT_PREFIX_RE.match(scope.get("path", ""))
++            if match:
++                state = {**scope.get("state", {}), "ng_rollout_id": match.group("rollout_id")}
++                scope = {**scope, "state": state}
++        await self._app(scope, receive, send)
++
+ 
+ class InferenceProviderConfig(BaseResponsesAPIModelConfig):
+     base_url: str
+@@ -68,6 +92,14 @@ class InferenceProvider(SimpleResponsesAPIModel):
+         self._semaphore = Semaphore(self.config.num_concurrent_requests)
+         return super().model_post_init(context)
+ 
++    def setup_webserver(self) -> FastAPI:
++        app = super().setup_webserver()
++        # Added after setup_webserver() (which installs _CaptureMiddleware) so
++        # this one is outermost and sees the raw `/ng-rollout/<id>` prefix
++        # before _CaptureMiddleware strips it -- see _CaptureRolloutIdMiddleware.
++        app.add_middleware(_CaptureRolloutIdMiddleware)
++        return app
++
+     async def responses(
+         self, request: Request, body: NeMoGymResponseCreateParamsNonStreaming = Body()
+     ) -> NeMoGymResponse:
+@@ -88,6 +120,17 @@ class InferenceProvider(SimpleResponsesAPIModel):
+         body_dict = body.model_dump(exclude_unset=True)
+         body_dict["model"] = self.config.model
+ 
++        # Propagate NeMo Gym's per-rollout correlation ID (the `/ng-rollout/<id>`
++        # path prefix the agent applies to its self-call, recovered by
++        # _CaptureRolloutIdMiddleware before NeMo Gym's own _CaptureMiddleware
++        # strips it -- current_rollout_id()/rollout_context() is NOT set on
++        # model servers, only on resources servers, so it can't be used here)
++        # into the outbound call's standard OpenAI `user` field, so a downstream
++        # provider/proxy can key per-rollout state off it.
++        rollout_id = getattr(request.state, "ng_rollout_id", None)
++        if rollout_id is not None:
++            body_dict["user"] = rollout_id
++
+         if self.config.extra_body:
+             body_dict = self.config.extra_body | body_dict
+ 
