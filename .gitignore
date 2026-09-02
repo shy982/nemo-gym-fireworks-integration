@@ -1,6 +1,5 @@
 # The notebook clones these fresh (see the notebook's own §2) -- never vendor
-# external repos here. nemo_gym_multistep_new_files.patch and
-# inference_provider_rollout_id.patch are the actual deliverable: the delta
+# external repos here. The .patch files are the actual deliverable: the delta
 # against a fresh clone of each.
 cookbook/
 nemo-gym/

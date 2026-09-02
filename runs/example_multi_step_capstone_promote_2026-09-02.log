@@ -1,0 +1,387 @@
+output model id: nemo-gym-v2-capstone-retry-1788311589
+18:13:38 [INFO] loaded 5 NeMo Gym rows from <repo-root>/nemo-gym/resources_servers/example_multi_step/data/example.jsonl
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+18:13:39 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+18:13:40 [INFO] recording proxy listening on 127.0.0.1:18234
+18:13:40 [INFO] proxy listening on 127.0.0.1:18234
+18:13:40 [INFO] wrote env.yaml pointing at the proxy (port 18234)
+18:13:40 [INFO] gym env start launched (pid=50888), waiting for readiness...
+18:14:18 [INFO] nemo gym servers ready; agent at http://127.0.0.1:15403
+18:14:18 [WARNING] async_rl_loop is EXPERIMENTAL and under active development; the Config / RolloutSetup API may change. See skills/fireworks-training/references/rl-async.md.
+18:14:18 [INFO] Router Replay skipped for dense model accounts/fireworks/models/qwen3p5-27b
+18:14:20 [INFO] Auto-resolved account ID: <account-id>
+18:14:20 [INFO] Creating RLOR job: POST https://api.fireworks.ai/v1/accounts/<account-id>/rlorTrainerJobs?trainingShape=accounts%2Ffireworks%2FtrainingShapes%2Fqwen3p5-27b-64k-lora%2Fversions%2Fnuaazesg&rlorTrainerJobId=training-api-service-d2320679 (model=accounts/fireworks/models/qwen3p5-27b) (payload={'serviceMode': True, 'keepAlive': False, 'dataset': '', 'trainingConfig': {'baseModel': 'accounts/fireworks/models/qwen3p5-27b', 'loraRank': 8, 'learningRate': 2.5e-05}, 'useReservation': True})
+18:14:20 [INFO] Created trainer job: training-api-service-d2320679
+18:14:20 [INFO] Auto-resolved account ID: <account-id>
+18:14:20 [INFO] [0s] Trainer job training-api-service-d2320679: state=JOB_STATE_PENDING
+18:14:20 [INFO] Creating deployment: qwen3p5-27b-1788311660
+18:14:21 [INFO] [0s] Deployment qwen3p5-27b-1788311660: CREATING
+18:14:36 [INFO] [15s] Deployment qwen3p5-27b-1788311660: CREATING
+18:15:22 [INFO] [62s] Trainer job training-api-service-d2320679: state=JOB_STATE_CREATING
+18:16:25 [INFO] [124s] Trainer job training-api-service-d2320679: state=JOB_STATE_CREATING
+18:17:27 [INFO] [186s] Trainer job training-api-service-d2320679: state=JOB_STATE_CREATING
+18:17:28 [INFO] [30s] Deployment qwen3p5-27b-1788311660: CREATING but serving requests -- treating as ready
+18:18:24 [INFO] [243s] Trainer job training-api-service-d2320679: state=JOB_STATE_RUNNING, healthz=OK -- service ready
+18:18:24 [INFO] ServiceClient initialized for session 80b454f20978447baae2e4179f01983a
+18:18:25 [INFO] Created model rlor-c6cfda10a8b6 (lora_rank=8)
+18:18:25 [INFO] FiretitanTrainingClient session_id: f6fc4b04
+18:18:27 [INFO] Created base-only model base-a5589d7b923a (reference)
+18:18:27 [INFO] FiretitanTrainingClient session_id: 5ab7aab1
+18:18:28 [INFO] Starting at step 0 from base model (no checkpoint)
+18:18:30 [INFO] Hotloading BASE (non-delta) snapshot 'step-0-f6fc4b04' to deployment 'qwen3p5-27b-1788311660'
+18:18:30 [INFO] Waiting for hotload (identity=step-0-f6fc4b04)...
+18:18:31 [INFO] Hotload: stage=idle, current=None, loading=step-0-f6fc4b04, ready=False, loaded_adapters=[] (0s)
+18:18:36 [INFO] Hotload: stage=updating, current=None, loading=step-0-f6fc4b04, ready=False, loaded_adapters=[] (5s)
+18:18:41 [INFO] Hotload: stage=updating, current=None, loading=step-0-f6fc4b04, ready=False, loaded_adapters=[] (10s)
+18:18:46 [INFO] Hotload: stage=updating, current=None, loading=step-0-f6fc4b04, ready=False, loaded_adapters=[] (15s)
+18:18:51 [INFO] Hotload: stage=updating, current=None, loading=step-0-f6fc4b04, ready=False, loaded_adapters=[] (20s)
+18:18:56 [INFO] Hotload complete: step-0-f6fc4b04 (took 26s)
+18:18:56 [INFO] [step 0] initial weight sync (28.6s)
+18:18:56 [INFO] algorithm=grpo trainer_loss=client kl_beta=0.001
+18:18:56 [INFO] rollout_fn: rollout_id=0-0 POST http://127.0.0.1:15403/run
+18:18:56 [INFO] rollout_fn: rollout_id=0-1 POST http://127.0.0.1:15403/run
+18:18:56 [INFO] rollout_fn: rollout_id=0-2 POST http://127.0.0.1:15403/run
+18:18:56 [INFO] rollout_fn: rollout_id=0-3 POST http://127.0.0.1:15403/run
+18:18:56 [INFO] rollout_fn: rollout_id=1-0 POST http://127.0.0.1:15403/run
+18:18:56 [INFO] rollout_fn: rollout_id=1-1 POST http://127.0.0.1:15403/run
+18:18:56 [INFO] rollout_fn: rollout_id=1-2 POST http://127.0.0.1:15403/run
+18:18:56 [INFO] rollout_fn: rollout_id=1-3 POST http://127.0.0.1:15403/run
+18:18:57 [INFO] proxy: received request rollout_id=0-0 turn=0
+18:18:57 [INFO] proxy: rollout_id=0-0 decision=TurnKind.NEW prepared prompt (3356 tokens), calling sampler (+0.0s)
+18:18:57 [INFO] proxy: received request rollout_id=0-2 turn=0
+18:18:57 [INFO] proxy: rollout_id=0-2 decision=TurnKind.NEW prepared prompt (3356 tokens), calling sampler (+0.0s)
+18:18:57 [INFO] proxy: received request rollout_id=0-1 turn=0
+18:18:57 [INFO] proxy: rollout_id=0-1 decision=TurnKind.NEW prepared prompt (3356 tokens), calling sampler (+0.0s)
+18:18:57 [INFO] proxy: received request rollout_id=0-3 turn=0
+18:18:57 [INFO] proxy: rollout_id=0-3 decision=TurnKind.NEW prepared prompt (3356 tokens), calling sampler (+0.0s)
+18:18:57 [INFO] proxy: received request rollout_id=1-0 turn=0
+18:18:57 [INFO] proxy: rollout_id=1-0 decision=TurnKind.NEW prepared prompt (3345 tokens), calling sampler (+0.0s)
+18:18:57 [INFO] proxy: received request rollout_id=1-1 turn=0
+18:18:57 [INFO] proxy: rollout_id=1-1 decision=TurnKind.NEW prepared prompt (3345 tokens), calling sampler (+0.0s)
+18:18:57 [INFO] proxy: received request rollout_id=1-2 turn=0
+18:18:57 [INFO] proxy: rollout_id=1-2 decision=TurnKind.NEW prepared prompt (3345 tokens), calling sampler (+0.0s)
+18:18:57 [INFO] proxy: received request rollout_id=1-3 turn=0
+18:18:57 [INFO] proxy: rollout_id=1-3 decision=TurnKind.NEW prepared prompt (3345 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: rollout_id=1-3 sampler returned 1 completions (+3.0s)
+18:19:00 [INFO] proxy: rollout_id=1-3 parsed completion: 175 output_tokens, content='\n', tool_calls=[{'type': 'function', 'id': 'call_0ca46eb16c084e4ab4559b1d', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}, {'type': 'function', 'id': 'call_efcab1e7301a4b5d920babb6', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:19:00 [INFO] proxy: rollout_id=1-3 responding (+3.0s total)
+18:19:00 [INFO] proxy: received request rollout_id=1-3 turn=1
+18:19:00 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:19:00 [INFO] proxy: rollout_id=1-3 decision=TurnKind.APPEND prepared prompt (3449 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: rollout_id=1-0 sampler returned 1 completions (+3.1s)
+18:19:00 [INFO] proxy: rollout_id=1-0 parsed completion: 213 output_tokens, content='\n', tool_calls=[{'type': 'function', 'id': 'call_eb62fa6925de4bc293a4e00d', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}, {'type': 'function', 'id': 'call_aaf679c2d6ed4f169cc02eeb', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:19:00 [INFO] proxy: rollout_id=1-0 responding (+3.1s total)
+18:19:00 [INFO] proxy: received request rollout_id=1-0 turn=1
+18:19:00 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:19:00 [INFO] proxy: rollout_id=1-0 decision=TurnKind.APPEND prepared prompt (3449 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: rollout_id=1-1 sampler returned 1 completions (+3.2s)
+18:19:00 [INFO] proxy: rollout_id=1-1 parsed completion: 204 output_tokens, content='\n', tool_calls=[{'type': 'function', 'id': 'call_ce417ad8127048aea2d89a2c', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}, {'type': 'function', 'id': 'call_fa909b05805945138a907102', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:19:00 [INFO] proxy: rollout_id=1-1 responding (+3.2s total)
+18:19:00 [INFO] proxy: rollout_id=1-2 sampler returned 1 completions (+3.2s)
+18:19:00 [INFO] proxy: rollout_id=1-2 parsed completion: 196 output_tokens, content='\n', tool_calls=[{'type': 'function', 'id': 'call_f799899c14f64c778b32e0bf', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}, {'type': 'function', 'id': 'call_942be9525f8449619c2fd7d8', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:19:00 [INFO] proxy: rollout_id=1-2 responding (+3.2s total)
+18:19:00 [INFO] proxy: received request rollout_id=1-1 turn=1
+18:19:00 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:19:00 [INFO] proxy: rollout_id=1-1 decision=TurnKind.APPEND prepared prompt (3449 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: received request rollout_id=1-2 turn=1
+18:19:00 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:19:00 [INFO] proxy: rollout_id=1-2 decision=TurnKind.APPEND prepared prompt (3449 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+3.7s)
+18:19:00 [INFO] proxy: rollout_id=0-2 parsed completion: 256 output_tokens, content='\n<tool_call>\n<function=get_synonym_value>\n<parameter=synonym>\nWarm\n</parameter>\n</function>\n', tool_calls=[{'type': 'function', 'id': 'call_2cd3fb2ebfe24548836b842e', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}]
+18:19:00 [INFO] proxy: rollout_id=0-2 responding (+3.7s total)
+18:19:00 [INFO] proxy: rollout_id=1-0 sampler returned 1 completions (+0.6s)
+18:19:00 [INFO] proxy: rollout_id=1-0 parsed completion: 42 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_5753ebb1980046e3adc1fe73', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:19:00 [INFO] proxy: rollout_id=1-0 responding (+0.6s total)
+18:19:00 [INFO] proxy: received request rollout_id=0-2 turn=1
+18:19:00 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:19:00 [INFO] proxy: rollout_id=0-2 decision=TurnKind.APPEND prepared prompt (3440 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: received request rollout_id=1-0 turn=2
+18:19:00 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:19:00 [INFO] proxy: rollout_id=1-0 decision=TurnKind.APPEND prepared prompt (3512 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: rollout_id=0-3 sampler returned 1 completions (+3.8s)
+18:19:00 [INFO] proxy: rollout_id=0-3 parsed completion: 256 output_tokens, content='The user is asking about efficient technologies that tackle challenges of warm ambient temperatures. The key term here is "warm" - they\'re asking about technologies that deal with warm temperatures.\n\n', tool_calls=None
+18:19:00 [INFO] proxy: rollout_id=0-3 responding (+3.8s total)
+18:19:00 [INFO] rollout_fn: rollout_id=0-3 got response (+3.9s) reward=0.0
+18:19:00 [INFO] proxy: rollout_id=0-1 sampler returned 1 completions (+3.8s)
+18:19:00 [INFO] proxy: rollout_id=0-1 parsed completion: 256 output_tokens, content='<tool_call>\n<function=get_synonym_value>\n<parameter=synonym>\nBlazing\n', tool_calls=None
+18:19:00 [INFO] proxy: rollout_id=0-1 responding (+3.8s total)
+18:19:00 [INFO] proxy: rollout_id=1-1 sampler returned 1 completions (+0.6s)
+18:19:00 [INFO] proxy: rollout_id=1-1 parsed completion: 42 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_e113f9ff90934032b26f1456', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:19:00 [INFO] proxy: rollout_id=1-1 responding (+0.6s total)
+18:19:00 [INFO] rollout_fn: rollout_id=0-1 got response (+3.9s) reward=0.0
+18:19:00 [INFO] proxy: received request rollout_id=1-1 turn=2
+18:19:00 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:19:00 [INFO] proxy: rollout_id=1-1 decision=TurnKind.APPEND prepared prompt (3512 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: rollout_id=1-3 sampler returned 1 completions (+0.8s)
+18:19:00 [INFO] proxy: rollout_id=1-3 parsed completion: 42 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_bf46ffb6f1344f0bb91fc720', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:19:00 [INFO] proxy: rollout_id=1-3 responding (+0.8s total)
+18:19:00 [INFO] proxy: received request rollout_id=1-3 turn=2
+18:19:00 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:19:00 [INFO] proxy: rollout_id=1-3 decision=TurnKind.APPEND prepared prompt (3512 tokens), calling sampler (+0.0s)
+18:19:00 [INFO] proxy: rollout_id=0-0 sampler returned 1 completions (+3.9s)
+18:19:00 [INFO] proxy: rollout_id=0-0 parsed completion: 256 output_tokens, content='The user is asking about efficient technologies that tackle challenges of warm ambient temperatures. The key term here is "warm" which relates to temperature.\n\nLooking at the available synonyms, I nee', tool_calls=None
+18:19:00 [INFO] proxy: rollout_id=0-0 responding (+3.9s total)
+18:19:00 [INFO] rollout_fn: rollout_id=0-0 got response (+4.0s) reward=0.0
+18:19:01 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+0.6s)
+18:19:01 [INFO] proxy: rollout_id=0-2 parsed completion: 41 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_d78f6d5530ef42ef9a5414cf', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, null]}'}}]
+18:19:01 [INFO] proxy: rollout_id=0-2 responding (+0.6s total)
+18:19:01 [INFO] proxy: received request rollout_id=0-2 turn=2
+18:19:01 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:19:01 [INFO] proxy: rollout_id=0-2 decision=TurnKind.APPEND prepared prompt (3527 tokens), calling sampler (+0.0s)
+18:19:01 [INFO] proxy: rollout_id=1-0 sampler returned 1 completions (+0.7s)
+18:19:01 [INFO] proxy: rollout_id=1-0 parsed completion: 49 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_8dbb6af378bb416c8ea364e9', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:19:01 [INFO] proxy: rollout_id=1-0 responding (+0.7s total)
+18:19:01 [INFO] proxy: received request rollout_id=1-0 turn=3
+18:19:01 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=2 hash-matched parent_id=None
+18:19:01 [INFO] proxy: rollout_id=1-0 decision=TurnKind.APPEND prepared prompt (3575 tokens), calling sampler (+0.0s)
+18:19:01 [INFO] proxy: rollout_id=1-2 sampler returned 1 completions (+1.3s)
+18:19:01 [INFO] proxy: rollout_id=1-2 parsed completion: 146 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_097b8bbf07714a24a8c33e6d', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:19:01 [INFO] proxy: rollout_id=1-2 responding (+1.3s total)
+18:19:01 [INFO] proxy: received request rollout_id=1-2 turn=2
+18:19:01 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:19:01 [INFO] proxy: rollout_id=1-2 decision=TurnKind.APPEND prepared prompt (3512 tokens), calling sampler (+0.0s)
+18:19:02 [INFO] proxy: rollout_id=1-0 sampler returned 1 completions (+0.6s)
+18:19:02 [INFO] proxy: rollout_id=1-0 parsed completion: 31 output_tokens, content='The synonym values for terms related to "hot" found in the context of the question are [711, 407].', tool_calls=None
+18:19:02 [INFO] proxy: rollout_id=1-0 responding (+0.6s total)
+18:19:02 [INFO] rollout_fn: rollout_id=1-0 got response (+5.1s) reward=1.0
+18:19:02 [INFO] [trajectory] token ancestry split 4 turns into 4 segments
+18:19:02 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+0.8s)
+18:19:02 [INFO] proxy: rollout_id=0-2 parsed completion: 59 output_tokens, content='', tool_calls=None
+18:19:02 [INFO] proxy: rollout_id=0-2 responding (+0.8s total)
+18:19:02 [WARNING] Async RL recoverable rollout errors: total=1 reason=retryable_http_status
+18:19:02 [INFO] proxy: rollout_id=1-1 sampler returned 1 completions (+1.7s)
+18:19:02 [INFO] proxy: rollout_id=1-1 parsed completion: 256 output_tokens, content='The user is asking "How do animals adapt to living in hot climates?". I have retrieved the synonym values for "Blazing" (711) and "Warm" (407) which are synonyms for "Hot". The extraction was successf', tool_calls=None
+18:19:02 [INFO] proxy: rollout_id=1-1 responding (+1.7s total)
+18:19:02 [INFO] rollout_fn: rollout_id=1-1 got response (+5.6s) reward=1.0
+18:19:02 [INFO] [trajectory] token ancestry split 3 turns into 3 segments
+18:19:02 [INFO] proxy: rollout_id=1-3 sampler returned 1 completions (+1.8s)
+18:19:02 [INFO] proxy: rollout_id=1-3 parsed completion: 246 output_tokens, content='The extracted synonym values for terms related to "hot" in your query are [711, 407], corresponding to "Blazing" and "Warm" respectively.\n\nTo answer your question: Animals adapt to hot climates throug', tool_calls=None
+18:19:02 [INFO] proxy: rollout_id=1-3 responding (+1.8s total)
+18:19:02 [INFO] rollout_fn: rollout_id=1-3 got response (+5.7s) reward=1.0
+18:19:02 [INFO] [trajectory] token ancestry split 3 turns into 3 segments
+18:19:02 [INFO] proxy: rollout_id=1-2 sampler returned 1 completions (+1.2s)
+18:19:02 [INFO] proxy: rollout_id=1-2 parsed completion: 256 output_tokens, content='The user is asking about animals adapting to hot climates.\nLooking at the list of synonyms provided, I need to identify which term is relevant to the query.\nThe query contains the word "hot".\nSearchin', tool_calls=None
+18:19:02 [INFO] proxy: rollout_id=1-2 responding (+1.2s total)
+18:19:02 [INFO] rollout_fn: rollout_id=1-2 got response (+5.9s) reward=1.0
+18:19:02 [INFO] [trajectory] token ancestry split 3 turns into 3 segments
+18:19:51 [INFO] Hotloading BASE (non-delta) snapshot 'step-1-f6fc4b04' to deployment 'qwen3p5-27b-1788311660'
+18:19:52 [INFO] Waiting for hotload (identity=step-1-f6fc4b04)...
+18:19:52 [INFO] Hotload: stage=idle, current=step-0-f6fc4b04, loading=step-1-f6fc4b04, ready=True, loaded_adapters=[] (0s)
+18:19:57 [INFO] Hotload: stage=updating, current=step-0-f6fc4b04, loading=step-1-f6fc4b04, ready=False, loaded_adapters=[] (5s)
+18:20:02 [INFO] Hotload: stage=updating, current=step-0-f6fc4b04, loading=step-1-f6fc4b04, ready=False, loaded_adapters=[] (10s)
+18:20:07 [INFO] Hotload: stage=updating, current=step-0-f6fc4b04, loading=step-1-f6fc4b04, ready=False, loaded_adapters=[] (15s)
+18:20:12 [INFO] Hotload: stage=updating, current=step-0-f6fc4b04, loading=step-1-f6fc4b04, ready=False, loaded_adapters=[] (20s)
+18:20:18 [INFO] Hotload complete: step-1-f6fc4b04 (took 26s)
+18:20:18 [INFO] Rollout 1 | Reward raw 0.571 filtered 0.571 | Samples raw 7 filtered 7 | Filter 0.0% | RefKL 0.0000
+18:20:18 [INFO] rollout_fn: rollout_id=2-0 POST http://127.0.0.1:15403/run
+18:20:18 [INFO] rollout_fn: rollout_id=2-1 POST http://127.0.0.1:15403/run
+18:20:18 [INFO] rollout_fn: rollout_id=2-2 POST http://127.0.0.1:15403/run
+18:20:18 [INFO] rollout_fn: rollout_id=2-3 POST http://127.0.0.1:15403/run
+18:20:18 [INFO] rollout_fn: rollout_id=3-0 POST http://127.0.0.1:15403/run
+18:20:18 [INFO] rollout_fn: rollout_id=3-1 POST http://127.0.0.1:15403/run
+18:20:18 [INFO] rollout_fn: rollout_id=3-2 POST http://127.0.0.1:15403/run
+18:20:18 [INFO] rollout_fn: rollout_id=3-3 POST http://127.0.0.1:15403/run
+18:20:18 [INFO] proxy: received request rollout_id=2-3 turn=0
+18:20:18 [INFO] proxy: rollout_id=2-3 decision=TurnKind.NEW prepared prompt (3353 tokens), calling sampler (+0.0s)
+18:20:18 [INFO] proxy: received request rollout_id=2-0 turn=0
+18:20:18 [INFO] proxy: rollout_id=2-0 decision=TurnKind.NEW prepared prompt (3353 tokens), calling sampler (+0.0s)
+18:20:18 [INFO] proxy: received request rollout_id=2-1 turn=0
+18:20:18 [INFO] proxy: rollout_id=2-1 decision=TurnKind.NEW prepared prompt (3353 tokens), calling sampler (+0.0s)
+18:20:18 [INFO] proxy: received request rollout_id=2-2 turn=0
+18:20:18 [INFO] proxy: rollout_id=2-2 decision=TurnKind.NEW prepared prompt (3353 tokens), calling sampler (+0.0s)
+18:20:18 [INFO] proxy: received request rollout_id=3-0 turn=0
+18:20:18 [INFO] proxy: rollout_id=3-0 decision=TurnKind.NEW prepared prompt (3351 tokens), calling sampler (+0.0s)
+18:20:18 [INFO] proxy: received request rollout_id=3-1 turn=0
+18:20:18 [INFO] proxy: rollout_id=3-1 decision=TurnKind.NEW prepared prompt (3351 tokens), calling sampler (+0.0s)
+18:20:18 [INFO] proxy: received request rollout_id=3-2 turn=0
+18:20:18 [INFO] proxy: rollout_id=3-2 decision=TurnKind.NEW prepared prompt (3351 tokens), calling sampler (+0.0s)
+18:20:18 [INFO] proxy: received request rollout_id=3-3 turn=0
+18:20:18 [INFO] proxy: rollout_id=3-3 decision=TurnKind.NEW prepared prompt (3351 tokens), calling sampler (+0.0s)
+18:20:19 [INFO] proxy: rollout_id=3-0 sampler returned 1 completions (+1.8s)
+18:20:19 [INFO] proxy: rollout_id=3-0 parsed completion: 256 output_tokens, content='The user is asking about urban planning and heat islands in cities. Let me analyze this query to see what terms might be relevant.\n\nLooking at the query: "In what ways can urban planning reduce the ef', tool_calls=None
+18:20:19 [INFO] proxy: rollout_id=3-0 responding (+1.8s total)
+18:20:20 [INFO] rollout_fn: rollout_id=3-0 got response (+1.9s) reward=0.0
+18:20:20 [INFO] proxy: rollout_id=2-1 sampler returned 1 completions (+1.9s)
+18:20:20 [INFO] proxy: rollout_id=2-1 parsed completion: 256 output_tokens, content='\n<tool_call>\n<function=get_synonym_value>\n<parameter=synonym>\nWarm\n</parameter>\n', tool_calls=[{'type': 'function', 'id': 'call_a0e1612639fc41eb854d6531', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}]
+18:20:20 [INFO] proxy: rollout_id=2-1 responding (+1.9s total)
+18:20:20 [INFO] proxy: rollout_id=2-3 sampler returned 1 completions (+1.9s)
+18:20:20 [INFO] proxy: rollout_id=2-3 parsed completion: 228 output_tokens, content='\n', tool_calls=[{'type': 'function', 'id': 'call_12b43abe093040c6824c9612', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}, {'type': 'function', 'id': 'call_5b3d0021309445dc8e08097e', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:20:20 [INFO] proxy: rollout_id=2-3 responding (+1.9s total)
+18:20:20 [INFO] proxy: received request rollout_id=2-1 turn=1
+18:20:20 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:20:20 [INFO] proxy: rollout_id=2-1 decision=TurnKind.APPEND prepared prompt (3433 tokens), calling sampler (+0.0s)
+18:20:20 [INFO] proxy: received request rollout_id=2-3 turn=1
+18:20:20 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:20:20 [INFO] proxy: rollout_id=2-3 decision=TurnKind.APPEND prepared prompt (3457 tokens), calling sampler (+0.0s)
+18:20:20 [INFO] proxy: rollout_id=2-0 sampler returned 1 completions (+2.0s)
+18:20:20 [INFO] proxy: rollout_id=2-0 parsed completion: 256 output_tokens, content='\n<tool_call>\n<function=get_synonym_value', tool_calls=[{'type': 'function', 'id': 'call_171edfc97f83478b8f65d9a1', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}]
+18:20:20 [INFO] proxy: rollout_id=2-0 responding (+2.0s total)
+18:20:20 [INFO] proxy: received request rollout_id=2-0 turn=1
+18:20:20 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:20:20 [INFO] proxy: rollout_id=2-0 decision=TurnKind.APPEND prepared prompt (3419 tokens), calling sampler (+0.0s)
+18:20:20 [INFO] proxy: rollout_id=3-2 sampler returned 1 completions (+2.0s)
+18:20:20 [INFO] proxy: rollout_id=3-2 parsed completion: 256 output_tokens, content='The user is asking about urban planning and reducing heat island effects in major cities. This is a general knowledge question about urban planning and environmental science.\n\nLooking at the available', tool_calls=None
+18:20:20 [INFO] proxy: rollout_id=3-2 responding (+2.0s total)
+18:20:20 [INFO] rollout_fn: rollout_id=3-2 got response (+2.0s) reward=0.0
+18:20:20 [INFO] proxy: rollout_id=3-3 sampler returned 1 completions (+2.0s)
+18:20:20 [INFO] proxy: rollout_id=3-3 parsed completion: 256 output_tokens, content='The user is asking about urban planning and reducing heat islands in cities. They want to know about ways to reduce heat/islands in urban areas.\n\nLooking at the available synonyms, I need to identify ', tool_calls=None
+18:20:20 [INFO] proxy: rollout_id=3-3 responding (+2.0s total)
+18:20:20 [INFO] rollout_fn: rollout_id=3-3 got response (+2.0s) reward=0.0
+18:20:20 [INFO] proxy: rollout_id=3-1 sampler returned 1 completions (+2.0s)
+18:20:20 [INFO] proxy: rollout_id=3-1 parsed completion: 256 output_tokens, content='The user is asking about urban planning and heat islands in cities. I need to analyze which synonyms from the available list might be relevant to this query.\n\nLooking at the query: "In what ways can u', tool_calls=None
+18:20:20 [INFO] proxy: rollout_id=3-1 responding (+2.0s total)
+18:20:20 [INFO] rollout_fn: rollout_id=3-1 got response (+2.1s) reward=0.0
+18:20:20 [INFO] proxy: rollout_id=2-2 sampler returned 1 completions (+2.0s)
+18:20:20 [INFO] proxy: rollout_id=2-2 parsed completion: 256 output_tokens, content='<tool_call>\n<function=get_synonym', tool_calls=None
+18:20:20 [INFO] proxy: rollout_id=2-2 responding (+2.0s total)
+18:20:20 [INFO] rollout_fn: rollout_id=2-2 got response (+2.1s) reward=0.0
+18:20:20 [INFO] proxy: rollout_id=2-0 sampler returned 1 completions (+0.7s)
+18:20:20 [INFO] proxy: rollout_id=2-0 parsed completion: 31 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_e2899d1e56534e338ea1189c', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:20:20 [INFO] proxy: rollout_id=2-0 responding (+0.7s total)
+18:20:20 [INFO] proxy: received request rollout_id=2-0 turn=2
+18:20:20 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:20:20 [INFO] proxy: rollout_id=2-0 decision=TurnKind.APPEND prepared prompt (3475 tokens), calling sampler (+0.0s)
+18:20:21 [INFO] proxy: rollout_id=2-1 sampler returned 1 completions (+1.2s)
+18:20:21 [INFO] proxy: rollout_id=2-1 parsed completion: 151 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_334320fdaf554c908d5ed531', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}]
+18:20:21 [INFO] proxy: rollout_id=2-1 responding (+1.2s total)
+18:20:21 [INFO] proxy: received request rollout_id=2-1 turn=2
+18:20:21 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:20:21 [INFO] proxy: rollout_id=2-1 decision=TurnKind.APPEND prepared prompt (3490 tokens), calling sampler (+0.0s)
+18:20:21 [INFO] proxy: rollout_id=2-0 sampler returned 1 completions (+0.4s)
+18:20:21 [INFO] proxy: rollout_id=2-0 parsed completion: 42 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_0ed14543d0a5454cb5cce1cf', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:20:21 [INFO] proxy: rollout_id=2-0 responding (+0.4s total)
+18:20:21 [INFO] proxy: received request rollout_id=2-0 turn=3
+18:20:21 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=2 hash-matched parent_id=None
+18:20:21 [INFO] proxy: rollout_id=2-0 decision=TurnKind.APPEND prepared prompt (3538 tokens), calling sampler (+0.0s)
+18:20:21 [INFO] proxy: rollout_id=2-3 sampler returned 1 completions (+1.2s)
+18:20:21 [INFO] proxy: rollout_id=2-3 parsed completion: 172 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_7f169370f4d742afa3876909', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:20:21 [INFO] proxy: rollout_id=2-3 responding (+1.2s total)
+18:20:21 [INFO] proxy: received request rollout_id=2-3 turn=2
+18:20:21 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:20:21 [INFO] proxy: rollout_id=2-3 decision=TurnKind.APPEND prepared prompt (3520 tokens), calling sampler (+0.0s)
+18:20:21 [INFO] proxy: rollout_id=2-1 sampler returned 1 completions (+0.7s)
+18:20:21 [INFO] proxy: rollout_id=2-1 parsed completion: 42 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_8cb70d0e9134427ba45578dc', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 711]}'}}]
+18:20:21 [INFO] proxy: rollout_id=2-1 responding (+0.7s total)
+18:20:21 [INFO] proxy: received request rollout_id=2-1 turn=3
+18:20:21 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=2 hash-matched parent_id=None
+18:20:21 [INFO] proxy: rollout_id=2-1 decision=TurnKind.APPEND prepared prompt (3553 tokens), calling sampler (+0.0s)
+18:20:22 [INFO] proxy: rollout_id=2-3 sampler returned 1 completions (+1.6s)
+18:20:22 [INFO] proxy: rollout_id=2-3 parsed completion: 256 output_tokens, content='The user is asking a question about factors contributing to high temperatures. The previous interactions were about extracting values for synonyms related to "Hot" (which are "Blazing" and "Warm"). Th', tool_calls=None
+18:20:22 [INFO] proxy: rollout_id=2-3 responding (+1.6s total)
+18:20:22 [INFO] proxy: rollout_id=2-0 sampler returned 1 completions (+1.7s)
+18:20:22 [INFO] rollout_fn: rollout_id=2-3 got response (+4.8s) reward=1.0
+18:20:22 [INFO] [trajectory] token ancestry split 3 turns into 3 segments
+18:20:22 [INFO] proxy: rollout_id=2-0 parsed completion: 256 output_tokens, content='\nSeveral factors contribute to a region experiencing extremely high temperatures:\n\n1.  **Solar Radiation:** The primary driver is the amount of solar energy a region receives, which depends on its lat', tool_calls=None
+18:20:22 [INFO] proxy: rollout_id=2-0 responding (+1.7s total)
+18:20:22 [INFO] rollout_fn: rollout_id=2-0 got response (+4.9s) reward=1.0
+18:20:22 [INFO] [trajectory] token ancestry split 4 turns into 4 segments
+18:20:23 [INFO] proxy: rollout_id=2-1 sampler returned 1 completions (+1.5s)
+18:20:23 [INFO] proxy: rollout_id=2-1 parsed completion: 256 output_tokens, content='Okay, the user is asking about factors that cause high temperatures in a region and their interactions. I need to focus on synonyms related to "hot" since the query involves "extremely high temperatur', tool_calls=None
+18:20:23 [INFO] proxy: rollout_id=2-1 responding (+1.5s total)
+18:20:23 [INFO] rollout_fn: rollout_id=2-1 got response (+5.4s) reward=0.0
+18:20:23 [INFO] [trajectory] token ancestry split 4 turns into 4 segments
+18:20:46 [INFO] Hotloading BASE (non-delta) snapshot 'step-2-f6fc4b04' to deployment 'qwen3p5-27b-1788311660'
+18:20:47 [INFO] Waiting for hotload (identity=step-2-f6fc4b04)...
+18:20:47 [INFO] Hotload: stage=idle, current=step-1-f6fc4b04, loading=step-2-f6fc4b04, ready=True, loaded_adapters=[] (0s)
+18:20:52 [INFO] Hotload: stage=updating, current=step-1-f6fc4b04, loading=step-2-f6fc4b04, ready=False, loaded_adapters=[] (5s)
+18:20:57 [INFO] Hotload: stage=updating, current=step-1-f6fc4b04, loading=step-2-f6fc4b04, ready=False, loaded_adapters=[] (10s)
+18:21:02 [INFO] Hotload: stage=updating, current=step-1-f6fc4b04, loading=step-2-f6fc4b04, ready=False, loaded_adapters=[] (15s)
+18:21:07 [INFO] Hotload: stage=updating, current=step-1-f6fc4b04, loading=step-2-f6fc4b04, ready=False, loaded_adapters=[] (20s)
+18:21:13 [INFO] Hotload complete: step-2-f6fc4b04 (took 25s)
+18:21:13 [INFO] Rollout 2 | Reward raw 0.250 filtered 0.250 | Samples raw 8 filtered 8 | Filter 0.0% | RefKL 0.0000
+18:21:13 [INFO] rollout_fn: rollout_id=4-0 POST http://127.0.0.1:15403/run
+18:21:13 [INFO] rollout_fn: rollout_id=4-1 POST http://127.0.0.1:15403/run
+18:21:13 [INFO] rollout_fn: rollout_id=4-2 POST http://127.0.0.1:15403/run
+18:21:13 [INFO] rollout_fn: rollout_id=4-3 POST http://127.0.0.1:15403/run
+18:21:13 [INFO] proxy: received request rollout_id=4-0 turn=0
+18:21:13 [INFO] proxy: rollout_id=4-0 decision=TurnKind.NEW prepared prompt (3347 tokens), calling sampler (+0.0s)
+18:21:13 [INFO] proxy: received request rollout_id=4-1 turn=0
+18:21:13 [INFO] proxy: rollout_id=4-1 decision=TurnKind.NEW prepared prompt (3347 tokens), calling sampler (+0.0s)
+18:21:13 [INFO] proxy: received request rollout_id=4-2 turn=0
+18:21:13 [INFO] proxy: rollout_id=4-2 decision=TurnKind.NEW prepared prompt (3347 tokens), calling sampler (+0.0s)
+18:21:13 [INFO] proxy: received request rollout_id=4-3 turn=0
+18:21:13 [INFO] proxy: rollout_id=4-3 decision=TurnKind.NEW prepared prompt (3347 tokens), calling sampler (+0.0s)
+18:21:14 [INFO] proxy: rollout_id=4-2 sampler returned 1 completions (+1.4s)
+18:21:14 [INFO] proxy: rollout_id=4-2 parsed completion: 183 output_tokens, content='\n', tool_calls=[{'type': 'function', 'id': 'call_8ff084be8d344f4396941675', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}, {'type': 'function', 'id': 'call_25c128640c4442bab86e0dfb', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:21:14 [INFO] proxy: rollout_id=4-2 responding (+1.4s total)
+18:21:14 [INFO] proxy: received request rollout_id=4-2 turn=1
+18:21:14 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:21:14 [INFO] proxy: rollout_id=4-2 decision=TurnKind.APPEND prepared prompt (3451 tokens), calling sampler (+0.0s)
+18:21:14 [INFO] proxy: rollout_id=4-3 sampler returned 1 completions (+1.6s)
+18:21:14 [INFO] proxy: rollout_id=4-3 parsed completion: 253 output_tokens, content='\n', tool_calls=[{'type': 'function', 'id': 'call_78064b5d123b4660bba20924', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}, {'type': 'function', 'id': 'call_cf6781e9807b489baa62be96', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:21:14 [INFO] proxy: rollout_id=4-3 responding (+1.6s total)
+18:21:14 [INFO] proxy: rollout_id=4-1 sampler returned 1 completions (+1.6s)
+18:21:14 [INFO] proxy: rollout_id=4-1 parsed completion: 256 output_tokens, content='\n<tool_call>\n<function=get_synonym', tool_calls=[{'type': 'function', 'id': 'call_36b7d76440394cd0b9aff1a2', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Blazing"}'}}]
+18:21:14 [INFO] proxy: rollout_id=4-1 responding (+1.6s total)
+18:21:14 [INFO] proxy: received request rollout_id=4-3 turn=1
+18:21:14 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:21:14 [INFO] proxy: rollout_id=4-3 decision=TurnKind.APPEND prepared prompt (3451 tokens), calling sampler (+0.0s)
+18:21:14 [INFO] proxy: received request rollout_id=4-1 turn=1
+18:21:14 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=0 hash-matched parent_id=None
+18:21:14 [INFO] proxy: rollout_id=4-1 decision=TurnKind.APPEND prepared prompt (3412 tokens), calling sampler (+0.0s)
+18:21:14 [INFO] proxy: rollout_id=4-0 sampler returned 1 completions (+1.9s)
+18:21:14 [INFO] proxy: rollout_id=4-0 parsed completion: 256 output_tokens, content='The user is asking about how heat impacts the performance and longevity of electronic devices. This is a general knowledge question about electronics and heat effects. I need to think about what synon', tool_calls=None
+18:21:14 [INFO] proxy: rollout_id=4-0 responding (+1.9s total)
+18:21:14 [INFO] rollout_fn: rollout_id=4-0 got response (+1.9s) reward=0.0
+18:21:15 [INFO] proxy: rollout_id=4-2 sampler returned 1 completions (+0.9s)
+18:21:15 [INFO] proxy: rollout_id=4-2 parsed completion: 111 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_0409f79a13864a01acd4afad', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:21:15 [INFO] proxy: rollout_id=4-2 responding (+0.9s total)
+18:21:15 [INFO] proxy: received request rollout_id=4-2 turn=2
+18:21:15 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:21:15 [INFO] proxy: rollout_id=4-2 decision=TurnKind.APPEND prepared prompt (3514 tokens), calling sampler (+0.0s)
+18:21:15 [INFO] proxy: rollout_id=4-3 sampler returned 1 completions (+0.9s)
+18:21:15 [INFO] proxy: rollout_id=4-3 parsed completion: 75 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_4f82fc447110469fa10d183a', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:21:15 [INFO] proxy: rollout_id=4-3 responding (+0.9s total)
+18:21:15 [INFO] proxy: received request rollout_id=4-3 turn=2
+18:21:15 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:21:15 [INFO] proxy: rollout_id=4-3 decision=TurnKind.APPEND prepared prompt (3514 tokens), calling sampler (+0.0s)
+18:21:15 [INFO] proxy: rollout_id=4-1 sampler returned 1 completions (+0.9s)
+18:21:15 [INFO] proxy: rollout_id=4-1 parsed completion: 147 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_9695df5326fb43ed904630c7', 'function': {'name': 'get_synonym_value', 'arguments': '{"synonym": "Warm"}'}}]
+18:21:15 [INFO] proxy: rollout_id=4-1 responding (+0.9s total)
+18:21:15 [INFO] proxy: received request rollout_id=4-1 turn=2
+18:21:15 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
+18:21:15 [INFO] proxy: rollout_id=4-1 decision=TurnKind.APPEND prepared prompt (3468 tokens), calling sampler (+0.0s)
+18:21:16 [INFO] proxy: rollout_id=4-1 sampler returned 1 completions (+0.6s)
+18:21:16 [INFO] proxy: rollout_id=4-1 parsed completion: 42 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_f466a97b3695483b9aae9e8b', 'function': {'name': 'extract_synonym_values', 'arguments': '{"synonym_values": [711, 407]}'}}]
+18:21:16 [INFO] proxy: rollout_id=4-1 responding (+0.6s total)
+18:21:16 [INFO] proxy: received request rollout_id=4-1 turn=3
+18:21:16 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=2 hash-matched parent_id=None
+18:21:16 [INFO] proxy: rollout_id=4-1 decision=TurnKind.APPEND prepared prompt (3531 tokens), calling sampler (+0.0s)
+18:21:17 [INFO] proxy: rollout_id=4-2 sampler returned 1 completions (+1.6s)
+18:21:17 [INFO] proxy: rollout_id=4-2 parsed completion: 256 output_tokens, content='The user is asking about how heat affects electronic devices. Looking at the available synonyms, I need to find synonyms related to "hot" since that\'s the concept the user query is focused on.\n\nFrom t', tool_calls=None
+18:21:17 [INFO] proxy: rollout_id=4-2 responding (+1.6s total)
+18:21:17 [INFO] rollout_fn: rollout_id=4-2 got response (+4.0s) reward=1.0
+18:21:17 [INFO] [trajectory] token ancestry split 3 turns into 3 segments
+18:21:17 [INFO] proxy: rollout_id=4-1 sampler returned 1 completions (+0.9s)
+18:21:17 [INFO] proxy: rollout_id=4-1 parsed completion: 143 output_tokens, content='Heat can significantly impact the performance and longevity of electronic devices. High temperatures can cause components like transistors and capacitors to operate outside their optimal range, leadin', tool_calls=None
+18:21:17 [INFO] proxy: rollout_id=4-1 responding (+0.9s total)
+18:21:17 [INFO] rollout_fn: rollout_id=4-1 got response (+4.1s) reward=1.0
+18:21:17 [INFO] [trajectory] token ancestry split 4 turns into 4 segments
+18:21:17 [INFO] proxy: rollout_id=4-3 sampler returned 1 completions (+1.7s)
+18:21:17 [INFO] proxy: rollout_id=4-3 parsed completion: 256 output_tokens, content='Okay, so the user asked how heat impacts electronic devices\' performance and longevity. I need to figure out the relevant synonyms for "hot" from the list provided. Looking at the available synonyms, ', tool_calls=None
+18:21:17 [INFO] proxy: rollout_id=4-3 responding (+1.7s total)
+18:21:17 [INFO] rollout_fn: rollout_id=4-3 got response (+4.2s) reward=1.0
+18:21:17 [INFO] [trajectory] token ancestry split 3 turns into 3 segments
+18:21:34 [INFO] Hotloading BASE (non-delta) snapshot 'step-3-f6fc4b04' to deployment 'qwen3p5-27b-1788311660'
+18:21:35 [INFO] Waiting for hotload (identity=step-3-f6fc4b04)...
+18:21:35 [INFO] Hotload: stage=idle, current=step-2-f6fc4b04, loading=step-3-f6fc4b04, ready=True, loaded_adapters=[] (0s)
+18:21:40 [INFO] Hotload: stage=updating, current=step-2-f6fc4b04, loading=step-3-f6fc4b04, ready=False, loaded_adapters=[] (5s)
+18:21:45 [INFO] Hotload: stage=updating, current=step-2-f6fc4b04, loading=step-3-f6fc4b04, ready=False, loaded_adapters=[] (10s)
+18:21:50 [INFO] Hotload: stage=updating, current=step-2-f6fc4b04, loading=step-3-f6fc4b04, ready=False, loaded_adapters=[] (15s)
+18:21:55 [INFO] Hotload: stage=updating, current=step-2-f6fc4b04, loading=step-3-f6fc4b04, ready=False, loaded_adapters=[] (20s)
+18:22:00 [INFO] Hotload complete: step-3-f6fc4b04 (took 25s)
+18:22:00 [INFO] Rollout 3 | Reward raw 0.750 filtered 0.750 | Samples raw 4 filtered 4 | Filter 0.0% | RefKL 0.0003
+18:22:00 [INFO] Saving DCP checkpoint 'step-3'...
+18:22:04 [INFO] DCP checkpoint 'step-3' saved (3.3s)
+18:22:20 [INFO] Sampler checkpoint 'step-3' already promotable on control plane — skipping redundant save.
+18:22:21 [INFO] Promoting newest promotable checkpoint: step-3-f6fc4b04 -> nemo-gym-v2-capstone-retry-1788311589
+18:22:21 [INFO] Promoting checkpoint 'step-3-f6fc4b04' -> model 'accounts/<account-id>/models/nemo-gym-v2-capstone-retry-1788311589'
+18:22:21 [INFO] Promotion operation started: accounts/<account-id>/operations/p7tvx4w5
+18:22:21 [INFO] Operation accounts/<account-id>/operations/p7tvx4w5: Checkpoint promotion queued
+18:22:31 [INFO] Operation accounts/<account-id>/operations/p7tvx4w5: Ensuring checkpoint is durable
+18:22:41 [INFO] Operation accounts/<account-id>/operations/p7tvx4w5: Copying checkpoint files to model path
+18:22:52 [INFO] Promoted! Model state=READY, kind=HF_PEFT_ADDON
+18:22:52 [INFO] PEFT: base=accounts/fireworks/models/qwen3p5-27b, r=8, targets=['down_proj', 'gate_proj', 'in_proj_a', 'in_proj_b', 'in_proj_qkv', 'in_proj_z', 'k_proj', 'o_proj', 'out_proj', 'q_proj', 'up_proj', 'v_proj']
+18:22:52 [INFO] Async RL training complete: 3 steps (3 new in this run)
+18:22:52 [INFO] Scaled deployment to zero: qwen3p5-27b-1788311660
+18:22:52 [INFO] Deleted trainer job: training-api-service-d2320679

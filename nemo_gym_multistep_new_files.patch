@@ -3,10 +3,10 @@ new file mode 100644
 index 0000000..e69de29
 diff --git a/training/examples/rl/nemo_gym_multistep/proxy.py b/training/examples/rl/nemo_gym_multistep/proxy.py
 new file mode 100644
-index 0000000..5c22788
+index 0000000..f7cde28
 --- /dev/null
 +++ b/training/examples/rl/nemo_gym_multistep/proxy.py
-@@ -0,0 +1,370 @@
+@@ -0,0 +1,438 @@
 +"""Recording proxy: an OpenAI-compatible /v1/chat/completions server backed by a
 +Fireworks Dedicated-deployment sampler (``DeploymentSampler``, via
 +``async_rl_loop``'s ``RolloutSetup``).
@@ -20,19 +20,34 @@ index 0000000..5c22788
 +``user`` field -- see the patch in responses_api_models/inference_provider/app.py).
 +
 +Per-session trajectory bookkeeping (turn-append/rollback detection, token-exact
-+stitching) uses content-hash prefix matching (``training.utils.rl.agent.trajectory``
-+/ ``turn_matching``) rather than ``training.utils.rl.rollout.MessageTrajectoryAssembler``'s
++stitching) does NOT use ``training.utils.rl.rollout.MessageTrajectoryAssembler``'s
 +exact-dict-equality checkpointing. That distinction matters here:
-+``example_multi_step_simple_agent`` drives NeMo Gym's *Responses API*, not raw
-+chat messages -- it accumulates Responses-format output items between turns,
++``simple_agent``-based harnesses (``example_multi_step_simple_agent``,
++``workplace_assistant_simple_agent``) drive NeMo Gym's *Responses API*, not raw
++chat messages -- they accumulate Responses-format output items between turns,
 +and the model server reconstructs a fresh chat-messages list from that history
 +on every single turn. The reconstruction is not guaranteed byte-identical to
 +whatever assistant message dict we returned the turn before (tool-call
-+id/ordering can differ), which made ``MessageTrajectoryAssembler`` hard-raise
-+``MessageValidationError`` on turn 2 (confirmed live). Content-hash matching
-+degrades gracefully instead: a hash mismatch just starts a fresh chain node
-+(losing that turn's training linkage, not crashing the rollout) via
-+``TurnKind.WIPE``/``NEW`` -- see ``_HistoryChain.resolve()`` below.
++id/ordering can differ, and -- confirmed live -- ``reasoning_content`` is
++silently dropped by NeMo Gym's converter unless ``uses_reasoning_parser=true``
++is set on the model server), which made ``MessageTrajectoryAssembler``
++hard-raise ``MessageValidationError`` on turn 2 in early testing.
++
++``_HistoryChain`` was first built to degrade gracefully off a content hash
++instead of hard-crashing on a mismatch -- but a live run against
++``workplace_assistant`` (longer, more tool-heavy conversations than
++``example_multi_step``) showed the hash mismatches often enough that *zero*
++turns were ever recognized as continuations, silently truncating every
++training sample to its last turn. The fix: ``SimpleAgent``'s episode loop
++(``responses_api_agents/simple_agent/app.py``) is strictly sequential per
++rollout -- it never forks or rewrites history for a given ``rollout_id`` --
++so a second request against an in-progress session is *always* a genuine
++continuation of that session's current leaf turn, regardless of whether the
++reconstructed message dict matches byte-for-byte. ``_HistoryChain.resolve()``
++below therefore trusts rollout-session identity (an existing leaf -> APPEND)
++as the primary signal, and keeps the content-hash comparison only as a
++logged consistency check -- not a gate -- to surface real anomalies without
++silently discarding real training data on a cosmetic mismatch.
 +"""
 +
 +from __future__ import annotations
@@ -93,6 +108,33 @@ index 0000000..5c22788
 +    return output_tokens, [float(v) for v in values]
 +
 +
++def _is_user_simulator_call(tools: list[dict[str, Any]]) -> bool:
++    """True for a ``toolsandbox`` internal user-simulator call, not the agent-under-test.
++
++    ``toolsandbox``'s resources server drives its own simulated-user role via a
++    direct ``/v1/chat/completions`` call to the same rollout's policy model
++    server (see ``resources_servers/toolsandbox/app.py``'s ``_ServerClientUser``)
++    -- NeMo Gym's rollout-correlation propagates unconditionally by URL path, so
++    this call reaches this proxy tagged with the *same* rollout_id as the real
++    agent-under-test's turns, and would otherwise get woven into the same
++    training-sample token chain (corrupting it: the simulated user's tokens
++    would look like the policy's own action). ToolSandbox's own tool-visibility
++    rules make this reliably distinguishable without any config: the agent's
++    turns always carry the scenario's real (multi-entry) toolset, while the
++    user-simulator either gets no tools at all, or exactly one --
++    ``end_conversation`` -- which is never visible to the agent role. Other
++    environments' agent turns always carry a non-trivial tool list (or none at
++    all, for a plain single-turn task), so this filter is a no-op for them.
++    """
++    if not tools:
++        return True
++    if len(tools) == 1:
++        function = tools[0].get("function") or {}
++        if function.get("name") == "end_conversation":
++            return True
++    return False
++
++
 +def _fix_tool_calls_for_openai(message: dict[str, Any]) -> None:
 +    """Coerce ``Renderer.to_openai_message()``'s tool_calls into real OpenAI shape.
 +
@@ -133,10 +175,25 @@ index 0000000..5c22788
 +            for node_id, units in self.response_units.items()
 +            if len(units) <= len(incoming_units) and units == incoming_units[: len(units)]
 +        ]
-+        if matches:
-+            matched, parent_id = max(matches)
-+            kind = TurnKind.APPEND if parent_id == self.leaf_id else TurnKind.WIPE
-+            return TurnDecision(kind, matched), parent_id
++        matched_len, hash_parent_id = max(matches) if matches else (0, None)
++
++        if self.leaf_id is not None:
++            # Rollout-session identity is the primary signal, not the content
++            # hash: this chain is one per rollout_id, and SimpleAgent's episode
++            # loop is strictly sequential and never rewrites history within a
++            # rollout -- so any request against an in-progress session (a chain
++            # that already has a leaf) is necessarily a continuation of that
++            # leaf, whether or not the reconstructed message dict happens to
++            # hash-match byte-for-byte (see module docstring for why it often
++            # doesn't). The hash comparison is kept only to log real anomalies.
++            if hash_parent_id != self.leaf_id:
++                logger.warning(
++                    "history-chain hash mismatch on rollout continuation "
++                    "(trusting rollout-session identity instead): leaf_id=%s hash-matched parent_id=%s",
++                    self.leaf_id, hash_parent_id,
++                )
++            return TurnDecision(TurnKind.APPEND, matched_len), self.leaf_id
++
 +        fallback = classify(self.stored_units, incoming_units)
 +        kind = TurnKind.NEW if not self.response_units else TurnKind.WIPE
 +        return TurnDecision(kind, fallback.matched_prefix_len), None
@@ -279,9 +336,14 @@ index 0000000..5c22788
 +                system_prompt = flatten_content(messages[0].get("content"))
 +                messages = messages[1:]
 +
-+            turn_request = TurnRequest(messages=messages, system=system_prompt)
-+            incoming_units = self._fingerprinter.units(turn_request)
-+            decision, parent_id = session.chain.resolve(incoming_units)
++            is_user_sim = _is_user_simulator_call(tools)
++            decision: TurnDecision | None = None
++            parent_id: int | None = None
++            incoming_units: list[Any] = []
++            if not is_user_sim:
++                turn_request = TurnRequest(messages=messages, system=system_prompt)
++                incoming_units = self._fingerprinter.units(turn_request)
++                decision, parent_id = session.chain.resolve(incoming_units)
 +
 +            prompt_ids = self._renderer.prompt_tokens(
 +                messages=messages,
@@ -292,7 +354,7 @@ index 0000000..5c22788
 +            temperature = float(body.get("temperature", self._temperature))
 +            logger.info(
 +                "proxy: rollout_id=%s decision=%s prepared prompt (%d tokens), calling sampler (+%.1fs)",
-+                rollout_id, decision.kind, len(prompt_ids), time.monotonic() - t0,
++                rollout_id, (decision.kind if decision else "user_sim (excluded)"), len(prompt_ids), time.monotonic() - t0,
 +            )
 +
 +            completions = await self._sampler.sample_with_prompt_tokens(
@@ -337,18 +399,24 @@ index 0000000..5c22788
 +                text=flatten_content(parsed_message.get("content")),
 +                metadata={"response_id": response_id},
 +            )
-+            node = session.tree.add_turn(turn, parent_id=parent_id, response_id=response_id)
-+            session.chain.stored_units = list(incoming_units)
-+            session.chain.leaf_id = node.node_id
++            if is_user_sim:
++                # Sampled and served like any other call, but deliberately kept
++                # out of the training-sample token chain -- see
++                # _is_user_simulator_call()'s docstring.
++                logger.info("proxy: rollout_id=%s user-simulator turn (excluded from training chain)", rollout_id)
++            else:
++                node = session.tree.add_turn(turn, parent_id=parent_id, response_id=response_id)
++                session.chain.stored_units = list(incoming_units)
++                session.chain.leaf_id = node.node_id
 +
-+            # Units representing "history + this new assistant turn" so the *next*
-+            # incoming request (which will include this turn plus a tool result) is
-+            # recognized as an APPEND rather than a fresh chain.
-+            response_units = list(incoming_units) + self._fingerprinter.units(
-+                TurnRequest(messages=[parsed_message], system=None)
-+            )[1:]
-+            session.chain.response_units[node.node_id] = response_units
-+            session.turn_count += 1
++                # Units representing "history + this new assistant turn" so the *next*
++                # incoming request (which will include this turn plus a tool result) is
++                # recognized as an APPEND rather than a fresh chain.
++                response_units = list(incoming_units) + self._fingerprinter.units(
++                    TurnRequest(messages=[parsed_message], system=None)
++                )[1:]
++                session.chain.response_units[node.node_id] = response_units
++                session.turn_count += 1
 +
 +        logger.info("proxy: rollout_id=%s responding (+%.1fs total)", rollout_id, time.monotonic() - t0)
 +        return web.json_response(self._completion_payload(parsed_message, output_tokens))
@@ -379,10 +447,10 @@ index 0000000..5c22788
 +__all__ = ["RolloutSession", "TinkerRecordingProxy"]
 diff --git a/training/examples/rl/nemo_gym_multistep/train.py b/training/examples/rl/nemo_gym_multistep/train.py
 new file mode 100644
-index 0000000..9c00729
+index 0000000..aee6611
 --- /dev/null
 +++ b/training/examples/rl/nemo_gym_multistep/train.py
-@@ -0,0 +1,400 @@
+@@ -0,0 +1,413 @@
 +#!/usr/bin/env python3
 +"""NeMo Gym (any resources server + agent) -> Fireworks async RL.
 +
@@ -545,6 +613,19 @@ index 0000000..9c00729
 +        "policy_model_name: policy\n"
 +        "observability_enabled: true\n"
 +        f"model_call_capture_dir: {capture_dir}\n"
++        # inference_provider.yaml has no ${...} interpolation hook for this
++        # field, so it's overridden via a direct nested key -- OmegaConf.merge
++        # (global_config.py) applies env.yaml over the whole config tree, not
++        # just flat-key interpolation targets. Without this, NeMo Gym's own
++        # Responses<->chat converter silently drops the model's
++        # `reasoning_content` on every round trip (default is False), which
++        # both discards real reasoning from NeMo Gym's own trajectory history
++        # and made the proxy's turn-continuation hash mismatch on nearly every
++        # turn that involved thinking (confirmed live on workplace_assistant).
++        "policy_model:\n"
++        "  responses_api_models:\n"
++        "    inference_provider:\n"
++        "      uses_reasoning_parser: true\n"
 +    )
 +    logger.info("wrote env.yaml pointing at the proxy (port %d)", proxy_port)
 +
