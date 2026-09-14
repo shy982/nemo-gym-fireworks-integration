@@ -166,7 +166,7 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
 17:00:07 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
 17:00:07 [INFO] proxy: rollout_id=0-3 decision=TurnKind.APPEND prepared prompt (1042 tokens), calling sampler (+0.0s)
 17:00:07 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+1.9s)
-17:00:07 [INFO] proxy: rollout_id=0-2 parsed completion: 177 output_tokens, content='Stephen Sondheim has been successfully added to your contacts with the phone number +19876543210. The unique identifier for this contact is `a575bd78-1d94-4c30-bffb-19bec2f41296`. Let me know if you n', tool_calls=None
+17:00:07 [INFO] proxy: rollout_id=0-2 parsed completion: 177 output_tokens, content='Stephen Sondheim has been successfully added to your contacts with the phone number +19876543210. The unique identifier for this contact is `00000000-0000-0000-0000-000000000001`. Let me know if you n', tool_calls=None
 17:00:07 [INFO] proxy: rollout_id=0-2 responding (+1.9s total)
 17:00:07 [INFO] proxy: rollout_id=0-1 sampler returned 1 completions (+1.1s)
 17:00:07 [INFO] proxy: rollout_id=0-1 parsed completion: 114 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_f5e734d9f7c749239a3fde2a', 'function': {'name': 'end_conversation', 'arguments': '{}'}}]
@@ -678,7 +678,7 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
 17:02:17 [INFO] proxy: received request rollout_id=3-2 turn=2
 17:02:17 [INFO] proxy: rollout_id=3-2 decision=user_sim (excluded) prepared prompt (1208 tokens), calling sampler (+0.0s)
 17:02:18 [INFO] proxy: rollout_id=2-1 sampler returned 1 completions (+1.3s)
-17:02:18 [INFO] proxy: rollout_id=2-1 parsed completion: 87 output_tokens, content='I have successfully added Stephen Sondheim to your contact list. His Person ID is 7b3050dc-e1df-401a-a156-b589c9c3865d.', tool_calls=None
+17:02:18 [INFO] proxy: rollout_id=2-1 parsed completion: 87 output_tokens, content='I have successfully added Stephen Sondheim to your contact list. His Person ID is 00000000-0000-0000-0000-000000000002.', tool_calls=None
 17:02:18 [INFO] proxy: rollout_id=2-1 responding (+1.3s total)
 17:02:18 [INFO] proxy: rollout_id=3-1 sampler returned 1 completions (+1.1s)
 17:02:18 [INFO] proxy: rollout_id=3-1 parsed completion: 80 output_tokens, content='Stephen Sondheim has been added to your contacts with the phone number +19876543210. Is there anything else you need help with?', tool_calls=None
@@ -702,7 +702,7 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
 17:02:18 [INFO] proxy: rollout_id=3-2 user-simulator turn (excluded from training chain)
 17:02:18 [INFO] proxy: rollout_id=3-2 responding (+0.7s total)
 17:02:18 [INFO] proxy: rollout_id=2-2 sampler returned 1 completions (+1.4s)
-17:02:18 [INFO] proxy: rollout_id=2-2 parsed completion: 159 output_tokens, content='Stephen Sondheim has been added to your contacts with the phone number +19876543210. The contact ID for this entry is `ee6f2577-462a-46d1-b693-8a2efc09af13`.', tool_calls=None
+17:02:18 [INFO] proxy: rollout_id=2-2 parsed completion: 159 output_tokens, content='Stephen Sondheim has been added to your contacts with the phone number +19876543210. The contact ID for this entry is `00000000-0000-0000-0000-000000000003`.', tool_calls=None
 17:02:18 [INFO] proxy: rollout_id=2-2 responding (+1.4s total)
 17:02:18 [INFO] proxy: received request rollout_id=2-2 turn=2
 17:02:18 [INFO] rollout_fn: rollout_id=3-2 got response (+2.8s) reward=0.919973683298291
@@ -752,7 +752,7 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
 17:02:19 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=1 hash-matched parent_id=None
 17:02:19 [INFO] proxy: rollout_id=2-3 decision=TurnKind.APPEND prepared prompt (851 tokens), calling sampler (+0.0s)
 17:02:20 [INFO] proxy: rollout_id=3-0 sampler returned 1 completions (+1.0s)
-17:02:20 [INFO] proxy: rollout_id=3-0 parsed completion: 222 output_tokens, content="Great! I've successfully added Stephen Sondheim to your contacts with the phone number +19876543210. The contact has been assigned the unique ID: f9cfe2ae-dc00-4666-8071-ae7e236f0c70.\n\nIs there anythi", tool_calls=None
+17:02:20 [INFO] proxy: rollout_id=3-0 parsed completion: 222 output_tokens, content="Great! I've successfully added Stephen Sondheim to your contacts with the phone number +19876543210. The contact has been assigned the unique ID: 00000000-0000-0000-0000-000000000004.\n\nIs there anythi", tool_calls=None
 17:02:20 [INFO] proxy: rollout_id=3-0 responding (+1.0s total)
 17:02:20 [INFO] proxy: received request rollout_id=3-0 turn=3
 17:02:20 [INFO] proxy: rollout_id=3-0 decision=user_sim (excluded) prepared prompt (1530 tokens), calling sampler (+0.0s)
@@ -875,7 +875,7 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
 17:03:08 [WARNING] history-chain hash mismatch on rollout continuation (trusting rollout-session identity instead): leaf_id=2 hash-matched parent_id=1
 17:03:08 [INFO] proxy: rollout_id=4-0 decision=TurnKind.APPEND prepared prompt (1099 tokens), calling sampler (+0.0s)
 17:03:08 [INFO] proxy: rollout_id=4-3 sampler returned 1 completions (+1.2s)
-17:03:08 [INFO] proxy: rollout_id=4-3 parsed completion: 246 output_tokens, content="Great! I've successfully added Stephen Sondheim to your contacts with the phone number +19876543210. The contact has been assigned the ID: 8aa71163-977d-4e63-a080-bf73a04ed46f.\n\nIs there anything else", tool_calls=None
+17:03:08 [INFO] proxy: rollout_id=4-3 parsed completion: 246 output_tokens, content="Great! I've successfully added Stephen Sondheim to your contacts with the phone number +19876543210. The contact has been assigned the ID: 00000000-0000-0000-0000-000000000005.\n\nIs there anything else", tool_calls=None
 17:03:08 [INFO] proxy: rollout_id=4-3 responding (+1.2s total)
 17:03:08 [INFO] proxy: received request rollout_id=4-3 turn=3
 17:03:08 [INFO] proxy: rollout_id=4-3 decision=user_sim (excluded) prepared prompt (1538 tokens), calling sampler (+0.0s)
