@@ -1,5 +1,12 @@
 # NeMo Gym x Fireworks RL Integration
 
+> **Disclaimer:** This is a personal, independent project by [@shy982](https://github.com/shy982),
+> not an official NVIDIA product, integration, or endorsement. It isn't
+> supported or maintained by NVIDIA, and nothing here represents NVIDIA's
+> position on NeMo Gym, Fireworks AI, or how the two should be integrated.
+> Shared for evaluation and experimentation purposes only -- expect rough
+> edges, and use at your own discretion.
+
 A confirmed-working proof of concept: **NeMo Gym controls the RL environment**
 (task generation, a real multi-turn tool-calling agent harness, verification)
 while **Fireworks AI runs training** (Dedicated GPU trainer + inference
