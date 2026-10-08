@@ -3,10 +3,10 @@ new file mode 100644
 index 0000000..e69de29
 diff --git a/training/examples/rl/nemo_gym_multistep/proxy.py b/training/examples/rl/nemo_gym_multistep/proxy.py
 new file mode 100644
-index 0000000..f7cde28
+index 0000000..5b051c1
 --- /dev/null
 +++ b/training/examples/rl/nemo_gym_multistep/proxy.py
-@@ -0,0 +1,438 @@
+@@ -0,0 +1,444 @@
 +"""Recording proxy: an OpenAI-compatible /v1/chat/completions server backed by a
 +Fireworks Dedicated-deployment sampler (``DeploymentSampler``, via
 +``async_rl_loop``'s ``RolloutSetup``).
@@ -319,7 +319,13 @@ index 0000000..f7cde28
 +
 +    async def _chat_completions(self, request: web.Request) -> web.Response:
 +        body = await request.json()
-+        rollout_id = str(body.get("user") or "default")
++        # Fail loudly rather than sharing one session across rollouts.
++        if not body.get("user"):
++            raise web.HTTPBadRequest(
++                text="missing `user` field: set correlate_via_user_field: true "
++                "(NVIDIA-NeMo/Gym#3783) so each rollout's calls carry its rollout id"
++            )
++        rollout_id = str(body["user"])
 +        session = self.get_or_create_session(rollout_id)
 +        t0 = time.monotonic()
 +        logger.info("proxy: received request rollout_id=%s turn=%d", rollout_id, session.turn_count)
@@ -447,10 +453,10 @@ index 0000000..f7cde28
 +__all__ = ["RolloutSession", "TinkerRecordingProxy"]
 diff --git a/training/examples/rl/nemo_gym_multistep/train.py b/training/examples/rl/nemo_gym_multistep/train.py
 new file mode 100644
-index 0000000..aee6611
+index 0000000..0c655cf
 --- /dev/null
 +++ b/training/examples/rl/nemo_gym_multistep/train.py
-@@ -0,0 +1,413 @@
+@@ -0,0 +1,419 @@
 +#!/usr/bin/env python3
 +"""NeMo Gym (any resources server + agent) -> Fireworks async RL.
 +
@@ -626,6 +632,12 @@ index 0000000..aee6611
 +        "  responses_api_models:\n"
 +        "    inference_provider:\n"
 +        "      uses_reasoning_parser: true\n"
++        # Opt in to NeMo Gym's own rollout-id -> `user` propagation
++        # (NVIDIA-NeMo/Gym#3783, merged to main 2026-10-08). Replaces the old
++        # inference_provider_rollout_id.patch. Requires observability_enabled
++        # above. Without it no `user` field is sent and the proxy rejects
++        # every request.
++        "      correlate_via_user_field: true\n"
 +    )
 +    logger.info("wrote env.yaml pointing at the proxy (port %d)", proxy_port)
 +
@@ -664,7 +676,7 @@ index 0000000..aee6611
 +            match = agent_url_re.search(text)
 +            if match:
 +                agent_url = match.group(1)
-+        if "All 3 / 3 servers ready" in text:
++        if any(a == b for a, b in re.findall(r"All (\d+) / (\d+) servers ready", text)):
 +            if agent_url is None:
 +                raise RuntimeError(f"servers ready but agent URL not found in {log_path}")
 +            logger.info("nemo gym servers ready; agent at %s", agent_url)

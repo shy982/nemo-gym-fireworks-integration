@@ -1,7 +1,7 @@
 # Results
 
-Every row below used the *same, unmodified* integration code (the two patches
-in this repo) -- only the `--resources-server`/`--agent-name`/`--dataset-path`
+Every row below used the *same, unmodified* integration code (the patches
+in this repo at the time) -- only the `--resources-server`/`--agent-name`/`--dataset-path`
 and `--base-model`/`--tokenizer-model`/`--training-shape-id` flags changed
 between rows. See `DESIGN.md` for what's actually being held constant here and
 why that's the point.

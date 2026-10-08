@@ -58,18 +58,18 @@ NeMo Gym environment to plug in -- switching environments is
 `--base-model`/`--tokenizer-model`/`--training-shape-id`. No code changes
 between the runs in `RESULTS.md`.
 
-**2. `inference_provider_rollout_id.patch`** fixes one file in NeMo Gym
-itself: `responses_api_models/inference_provider/app.py`. NeMo Gym's own
-per-rollout correlation mechanism (`current_rollout_id()`) is only wired up
-on *resources servers*, never on model servers -- calling it from
-`inference_provider` (a model server) silently always returns `None`. Every
-concurrent rollout would collide into one shared proxy session and corrupt
-each other's conversation state without this fix. The patch adds a small
-middleware that recovers the correlation id directly from the
-`/ng-rollout/<id>` URL path prefix before NeMo Gym's own middleware strips
-it, and threads it into the outbound OpenAI `user` field.
+**2. NeMo Gym's `correlate_via_user_field` option (no patch).** Every
+concurrent rollout needs its own proxy session, so the proxy must know which
+rollout each model call belongs to. NeMo Gym's `inference_provider` model
+server can forward its per-rollout correlation id (`current_rollout_id()`) as
+the outbound OpenAI `user` field when `correlate_via_user_field: true` and
+`observability_enabled: true` are set (NVIDIA-NeMo/Gym#3783, merged to `main`
+2026-10-08). `train.py` writes both into `env.yaml`. The proxy rejects any request
+without a `user` field (HTTP 400) rather than sharing one session across
+rollouts. This used to be a Gym patch (`inference_provider_rollout_id.patch`)
+that added its own middleware; it was removed once the option landed upstream.
 
-Both patches are living here until they're upstreamed (or until the
+The cookbook patch lives here until it is upstreamed (or until the
 maintaining teams decide a different owning location) -- see `README.md`.
 
 ## Key design decisions
@@ -210,7 +210,7 @@ python -m training.examples.rl.nemo_gym_multistep.train \
 ```
 
 Do a free dry-run first (`gym env start --resources-server <name>
---model-type inference_provider`, watch for `All 3 / 3 servers ready`) before
+--model-type inference_provider`, watch for `All N / N servers ready`) before
 spending anything live -- catches missing per-server dependencies or config
 issues at zero cost.
 
