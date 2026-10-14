@@ -13,8 +13,16 @@ inference deployment, GRPO, weight hotloading, checkpointing -- wired
 together through Fireworks' own `training.recipes.async_rl_loop.main()`
 framework.
 
+The bridge itself now lives upstream: it is the
+[`training/examples/rl/nemo_gym/`](https://github.com/fw-ai/cookbook/tree/main/training/examples/rl/nemo_gym)
+example in [`fw-ai/cookbook`](https://github.com/fw-ai/cookbook) (contributed in
+[#704](https://github.com/fw-ai/cookbook/pull/704)), and NeMo Gym's side is the
+`correlate_via_user_field` option in [`NVIDIA-NeMo/Gym`](https://github.com/NVIDIA-NeMo/Gym)
+([#3783](https://github.com/NVIDIA-NeMo/Gym/pull/3783)). **No patches are needed
+against either project.** This repo is the notebook, the narrative, and the evidence.
+
 The point of this repo is that switching environment or model is a **config
-change**, not a new codebase. The same patch and one notebook have been
+change**, not a new codebase. The same integration code and one notebook have been
 run, unmodified, against two structurally different models (dense and MoE)
 and **three** structurally different NeMo Gym environments -- including one
 (`toolsandbox`) with a genuinely different agent harness and continuous
@@ -27,7 +35,7 @@ every run and exact numbers.
 
 **[`Setup_and_Run.ipynb`](Setup_and_Run.ipynb)** -- the single entrypoint.
 Standalone, Run-All-able: from nothing but a Fireworks API key and `git`, it
-clones both upstream repos, applies the patch below, builds both
+clones both upstream repos, builds both
 environments, demonstrates the chosen NeMo Gym environment booting for free,
 then (once you flip its safety switch) runs a real, paid training loop end to
 end. Which environment and model it targets are two small config blocks
@@ -44,27 +52,31 @@ combination actually run, exact per-step numbers, logs, and known caveats.
 
 ## What's in this repo
 
-This integration lives as a small addition on top of two upstream projects
-that this repo does not vendor -- the notebook clones fresh copies of both
-and applies the patch below to the cookbook:
+Everything the integration needs is in two upstream projects, which this repo
+does not vendor -- the notebook clones fresh copies of both:
 
-| File | What it does |
+| Where | What |
 |---|---|
-| `nemo_gym_multistep_new_files.patch` | Adds the NeMo Gym <-> Fireworks bridge (`proxy.py`, `train.py`) as a new example under [`fw-ai/cookbook`](https://github.com/fw-ai/cookbook)'s `training/examples/rl/`. |
+| [`fw-ai/cookbook`](https://github.com/fw-ai/cookbook) `training/examples/rl/nemo_gym/` | The NeMo Gym <-> Fireworks bridge: `proxy.py` (`RecordingChatProxy`, records exact token ids/logprobs per rollout) and `train.py` (starts the proxy and `gym env start`, runs `async_rl_loop`). Its own README documents flags and behavior. |
+| [`NVIDIA-NeMo/Gym`](https://github.com/NVIDIA-NeMo/Gym) `main` | `inference_provider`'s opt-in `correlate_via_user_field` (#3783, merged 2026-10-08), which `train.py` enables in the `env.yaml` it writes. Use any `main` from that date on. |
 
-**NeMo Gym needs no patch.** Correlating concurrent rollouts relies on
-`inference_provider`'s opt-in `correlate_via_user_field` option, which is in
-[`NVIDIA-NeMo/Gym`](https://github.com/NVIDIA-NeMo/Gym) `main` as of
-[#3783](https://github.com/NVIDIA-NeMo/Gym/pull/3783) (merged 2026-10-08).
-Use a NeMo Gym checkout that includes it; `train.py` turns it on in the
-`env.yaml` it writes. This replaces the earlier
-`inference_provider_rollout_id.patch`, which no longer applies to current `main`.
+The two patch files this repo used to ship (`inference_provider_rollout_id.patch`
+for Gym and `nemo_gym_multistep_new_files.patch` for the cookbook) were removed
+once both changes landed upstream. The logs under `runs/` were produced with
+those patches; see `RESULTS.md`.
 
-The cookbook patch has not been upstreamed yet -- it lives here until it is
-(or until the maintaining teams determine a different owning location).
+In this repo:
 
-`runs/` holds sanitized full logs from real, confirmed runs, referenced from
-`RESULTS.md`.
+| File | What it is |
+|---|---|
+| [`Setup_and_Run.ipynb`](Setup_and_Run.ipynb) | Run-All walkthrough |
+| [`DESIGN.md`](DESIGN.md) | Engineering narrative |
+| [`RESULTS.md`](RESULTS.md) | Run evidence |
+| `runs/` | Sanitized full logs from real, confirmed runs, referenced from `RESULTS.md` |
+
+`train.py` writes `env.yaml` in the NeMo Gym checkout (and refuses to
+overwrite one it didn't generate), so use a dedicated clone -- the notebook's
+`nemo-gym/` is one.
 
 ## Requirements
 
@@ -90,5 +102,7 @@ free-dry-run tip before spending anything live.
   `RESULTS.md` is likewise a pipeline check, not a quality eval (rank-8 LoRA,
   3 steps, a training-set row). See the notebook's "Scaling up beyond the
   smoke test" section and `DESIGN.md`'s open items for how to go further.
+- Harnesses that fork or rewrite conversation history are unsupported: the
+  proxy treats each rollout's history as append-only.
 - `toolsandbox`'s full scenario set (hundreds+ of generated scenarios) is
   unbuilt/unused here -- only its 5-row smoke set has been run.

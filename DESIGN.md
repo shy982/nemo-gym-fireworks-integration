@@ -20,7 +20,7 @@ combination, why it's built the way it is, and what's still open.
 | Optimizer, weight hotload, checkpointing | -- | Yes |
 
 Neither side reimplements the other's job. The integration surface is
-deliberately small: a recording proxy and one middleware patch (below).
+deliberately small: a recording proxy (in the cookbook) and one NeMo Gym config option (below).
 
 ## Architecture
 
@@ -30,10 +30,10 @@ deliberately small: a recording proxy and one middleware patch (below).
         |  resources server   agent harness   model server |   |  Dedicated trainer (GRPO)      |
         |  (verifier, tools)  (e.g. simple_agent, (inference_ |   |  Dedicated inference deployment |
         |                      toolsandbox_agent) provider,   |<--+  (hotloaded every step)         |
-        |                      )              patched)      |   |                                  |
+        |                      )              )             |   |                                  |
         +-------------------------------------------------+   +--------------------------------+
                         |                          |
-                        |  /run (direct HTTP)       |  proxy.py: TinkerRecordingProxy
+                        |  /run (direct HTTP)       |  proxy.py: RecordingChatProxy
                         |  from rollout_fn           |  (OpenAI-compatible HTTP server,
                         v                          v   samples from the live deployment,
               async_rl_loop.main()  <----------------  records exact tokens/logprobs)
@@ -43,34 +43,37 @@ deliberately small: a recording proxy and one middleware patch (below).
 
 `train.py`'s `rollout_fn` makes one direct HTTP `/run` POST per sample
 straight to the live NeMo Gym agent harness (setting NeMo Gym's own
-`_ng_task_index`/`_ng_rollout_index` correlation fields itself, and passing
-the full dataset row through -- this is the same contract
+`_ng_task_index`/`_ng_rollout_index` correlation fields itself plus a unique
+`_ng_rollout_id` per call, and passing the full dataset row through -- this is the same contract
 `rollout_collection.py` inside NeMo Gym itself uses), then drains the
 matching `proxy.py` session into a `RolloutRun`/`RolloutSample` for the
 recipe.
 
 ## The stable contract: two integration points, everything else is config
 
-**1. `nemo_gym_multistep_new_files.patch`** adds `proxy.py`/`train.py` as a
-new cookbook example. This is the only code that has to exist for *any*
-NeMo Gym environment to plug in -- switching environments is
+**1. The cookbook's `nemo_gym` example** (`proxy.py`/`train.py` in
+[`fw-ai/cookbook`](https://github.com/fw-ai/cookbook) `training/examples/rl/nemo_gym/`,
+upstreamed in cookbook#704) is the only code that has to exist for *any* NeMo
+Gym environment to plug in -- switching environments is
 `--resources-server`/`--agent-name`/`--dataset-path`, switching models is
 `--base-model`/`--tokenizer-model`/`--training-shape-id`. No code changes
-between the runs in `RESULTS.md`.
+between the runs in `RESULTS.md`. It targets the Dedicated
+trainer + deployment recipe (`async_rl_loop`) only.
 
-**2. NeMo Gym's `correlate_via_user_field` option (no patch).** Every
-concurrent rollout needs its own proxy session, so the proxy must know which
-rollout each model call belongs to. NeMo Gym's `inference_provider` model
-server can forward its per-rollout correlation id (`current_rollout_id()`) as
-the outbound OpenAI `user` field when `correlate_via_user_field: true` and
-`observability_enabled: true` are set (NVIDIA-NeMo/Gym#3783, merged to `main`
-2026-10-08). `train.py` writes both into `env.yaml`. The proxy rejects any request
+**2. NeMo Gym's `correlate_via_user_field` option.** Every concurrent
+rollout needs its own proxy session, so the proxy must know which rollout each
+model call belongs to. NeMo Gym's `inference_provider` model server forwards
+its per-rollout correlation id as the outbound OpenAI `user` field when
+`correlate_via_user_field: true` and `observability_enabled: true` are set
+(NVIDIA-NeMo/Gym#3783, merged to `main` 2026-10-08). `train.py` writes both
+into `env.yaml`. An explicit `_ng_rollout_id` in the `/run` body takes
+precedence over the contextvar, and `train.py` makes it unique per call so a
+retry can never append onto a stale session. The proxy rejects any request
 without a `user` field (HTTP 400) rather than sharing one session across
-rollouts. This used to be a Gym patch (`inference_provider_rollout_id.patch`)
-that added its own middleware; it was removed once the option landed upstream.
+rollouts.
 
-The cookbook patch lives here until it is upstreamed (or until the
-maintaining teams decide a different owning location) -- see `README.md`.
+Both pieces used to be patches carried by this repo (a Gym middleware patch
+and a cookbook patch). Both are upstream now and the patches are gone.
 
 ## Key design decisions
 
@@ -103,7 +106,7 @@ was causing the raw client to hang -- switching to it (plus moving to the
 Dedicated trainer+deployment path, since `DeploymentSampler` is built for
 that path, not the serverless one) resolved it.
 
-**Trajectory tracking: rollout-session identity as the primary signal, content hash as a consistency check only.**
+**Trajectory tracking: rollout-session identity, not content hashing.**
 `proxy.py` needs to recognize when an incoming request is turn N+1 of an
 in-progress rollout rather than a fresh one. The first approach
 (`training.utils.rl.rollout.MessageTrajectoryAssembler`, built for callers
@@ -131,19 +134,37 @@ every turn; `example_multi_step`'s 2-tool tasks let the model skip it often
 enough to occasionally match by chance, which is why the bug looked
 environment-specific rather than universal.
 
-**Fixed, two parts** (live-validated, see `RESULTS.md`): (1) `train.py` now
-sets `uses_reasoning_parser: true` on the generated `env.yaml` -- an
-independent correctness fix, since without it the model's reasoning was
-silently discarded from NeMo Gym's own trajectory history on *every* run
-using this proxy, not just this bug. (2) `_HistoryChain.resolve()` now
-trusts rollout-session identity as the primary signal: `simple_agent`'s
-episode loop (`responses_api_agents/simple_agent/app.py`) is strictly
-sequential per rollout and never forks or rewrites history for a given
-`rollout_id`, so any request against an in-progress session (a chain that
-already has a leaf turn) is *necessarily* a continuation of that leaf,
-whether or not the reconstructed message dict hash-matches byte-for-byte.
-The hash comparison is kept only as a logged consistency check (a mismatch
-now logs a warning instead of silently truncating the training sample).
+**Where it ended up.** Two fixes, both live-validated (see `RESULTS.md`):
+(1) `train.py` sets `uses_reasoning_parser: true` on the generated
+`env.yaml` -- an independent correctness fix, since without it the model's
+reasoning was silently discarded from NeMo Gym's own trajectory history on
+*every* run using this proxy, not just this bug. (2) The proxy trusts
+rollout-session identity and does not compare message hashes at all:
+`simple_agent`'s episode loop (`responses_api_agents/simple_agent/app.py`) is
+strictly sequential per rollout and never forks or rewrites history, so any
+request against an in-progress session is necessarily a continuation of that
+session's last turn. Each rollout's history is therefore **append-only** (the
+upstreamed `RolloutSession` is a plain chain over `DeploymentTrainingSession`),
+and harnesses that fork or rewrite history are unsupported. When a turn's
+prompt is not a token-prefix of the previous prompt + output, the rollout is
+split into several training segments rather than silently truncated; all
+segments are returned, and the per-rollout log line reports turns, segments
+and trained tokens.
+
+**Sampling follows the recipe, not the request.** The proxy samples with
+`RolloutSetup.sample_kwargs` (temperature, `top_p=1.0`, `top_k=0`,
+`max_seq_len`, ...) so the proxy's samples are on-policy exactly as the recipe
+configures them. A per-request `temperature`/`top_p` from NeMo Gym is ignored,
+and a request's `max_tokens` can only lower `--max-completion-tokens`. The
+reported `finish_reason` comes from the sampler (`length` when the cap was
+hit), and `usage` carries real token counts.
+
+**Failure handling.** If `/run` errors, times out, or returns no reward,
+`rollout_fn` releases that rollout's proxy session before re-raising, so
+nothing leaks across retries. `gym env start` readiness is polled against the
+head server (`/server_instances`) with a configurable timeout
+(`--gym-start-timeout-s`, default 900s -- a first start on a fresh checkout
+builds one venv per server), and the process is stopped if startup fails.
 
 **Tool-call formatting fix.** `tinker_cookbook`'s renderer emits
 `tool_calls[].id = None` and `function.arguments` as a parsed dict, not a
@@ -151,7 +172,7 @@ JSON string. NeMo Gym's own strict OpenAI-schema validation correctly
 rejects both -- meaning every real tool call the model attempted was
 silently 500ing until `proxy.py` normalizes the shape (`_fix_tool_calls_for_openai`).
 
-**Filtering out `toolsandbox`'s internal user-simulator, without a second model server.**
+**Filtering out `toolsandbox`'s internal user-simulator, without a second model server (opt-in).**
 `toolsandbox` is the first environment validated with a genuinely different
 agent harness (`toolsandbox_agent`, not `simple_agent`) and a dual-role
 serving setup: the resources server itself drives a simulated-user role via
@@ -160,25 +181,25 @@ model, triggered from *inside* `toolsandbox`'s own `/step` handler, not from
 the agent harness. NeMo Gym's rollout-correlation contextvar propagates
 unconditionally by URL path regardless of which process makes the call
 (`nemo_gym/server_utils.py`, `nemo_gym/rollout_correlation.py`), so this
-user-simulator call reaches the proxy tagged with the *same* `rollout_id` as
+user-simulator call reaches the proxy tagged with the *same* rollout id as
 the agent-under-test's turns -- naively, it would get woven into the same
 training-sample token chain, making the simulated user's tokens look like
 the policy's own action.
 
-Traced the actual outbound payloads (both call sites, side by side) to find
-a reliable, config-independent differentiator: ToolSandbox's own
-tool-visibility rules (vendored, unmodified, from the upstream Apple
-ToolSandbox project) mean the agent-under-test's turns always carry the
-scenario's real (multi-entry) toolset, while the user-simulator either gets
-no tools at all, or exactly one -- `end_conversation` -- which is never
-visible to the agent role. `proxy.py`'s `_is_user_simulator_call()` uses
-exactly this (`tools` absent/empty, or a single `end_conversation` tool) to
-sample and serve the user-simulator's calls normally while excluding them
-from `TrainingSessionTree`/`_HistoryChain` bookkeeping -- no second,
-dedicated model server needed, and no per-environment config to keep in
-sync. Live-validated: 55 user-simulator turns correctly identified and
-excluded from training samples in a single run, with 0 leaking into the
-agent-under-test's token chain (see `RESULTS.md`).
+ToolSandbox's own tool-visibility rules (vendored, unmodified, from the
+upstream Apple ToolSandbox project) mean the agent-under-test's turns always
+carry the scenario's real (multi-entry) toolset, while the user-simulator
+either gets no tools at all, or exactly one -- `end_conversation` -- which is
+never visible to the agent role. `_is_user_simulator_call()` uses exactly this
+to sample and serve the user-simulator's calls normally while excluding them
+from the training chain -- no second model server and no per-environment
+config to keep in sync.
+
+Because the heuristic would misclassify any environment whose *agent* turns
+legitimately carry no tools (plain single-turn tasks), the upstreamed version
+applies it **only when asked**: pass `--exclude-user-simulator` for
+`toolsandbox`. It is off by default. Live-validated on the merged code: 33
+proxy calls, 11 excluded, 22 agent turns trained (see `RESULTS.md`).
 
 **A second, independent Fireworks API surface: Deployments.** Everything
 above uses `async_rl_loop.main()`'s SDK-managed rollout deployment --
@@ -203,7 +224,7 @@ the live query-and-compare result.
 No code changes needed in the common case:
 
 ```bash
-python -m training.examples.rl.nemo_gym_multistep.train \
+python -m training.examples.rl.nemo_gym.train \
     --resources-server <resources-server-name> \
     --agent-name <agent-process-name> \
     --dataset-path <path-to-jsonl>
@@ -216,6 +237,16 @@ issues at zero cost.
 
 ## Open items
 
+- **TITO integration.** The cookbook's SDK-side exact-token path (`TITOSidecar`)
+  is environment-local: one endpoint plus bearer token per trajectory, with a
+  drift policy (`new_segment`/`reject`). NeMo Gym's shared model server tags
+  rollouts with the `user` field instead, so using it would need a small adapter
+  that routes by `user` to per-rollout TITO trajectories. Not built; the proxy's
+  own recording works today.
+- **Serverless.** The example is Dedicated-only. A serverless variant
+  (`async_rl_loop_serverless`) was tried and removed from the upstream PR:
+  tokenizer remote-code handling and intermittent Gym-side rollout hangs were
+  unresolved.
 - ~~Fix trajectory-tracking turn linkage~~ -- done, see `RESULTS.md`.
 - ~~Validate against a genuinely different agent harness~~ -- done
   (`toolsandbox`/`toolsandbox_agent`), see `RESULTS.md`.

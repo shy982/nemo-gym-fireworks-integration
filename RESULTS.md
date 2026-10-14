@@ -1,7 +1,9 @@
 # Results
 
-Every row below used the *same, unmodified* integration code (the patches
-in this repo at the time) -- only the `--resources-server`/`--agent-name`/`--dataset-path`
+The rows in the first table below used the *same, unmodified* integration code
+(as carried by this repo's patches at the time, before they were upstreamed;
+those logs predate the final upstreamed version, so e.g. the "Turn linkage"
+counts refer to the earlier hash-based tracker) -- only the `--resources-server`/`--agent-name`/`--dataset-path`
 and `--base-model`/`--tokenizer-model`/`--training-shape-id` flags changed
 between rows. See `DESIGN.md` for what's actually being held constant here and
 why that's the point.
@@ -18,6 +20,26 @@ All runs: real trainer + Dedicated deployment provisioning, real rollouts
 against NeMo Gym's live verifier, real GRPO optimizer steps with weight
 hotload back into the live deployment, clean automatic teardown (verified
 against the Fireworks API afterward, not just trusted from the log).
+
+## Re-validation on the upstreamed code (2026-10-08)
+
+After both pieces landed upstream, the cookbook example (as merged, minus the
+since-removed serverless path) was re-run live against NeMo Gym `main` at
+`412bd3bf` (which includes #3783) with **no patches applied to either repo**.
+Dedicated `qwen3p5-27b`, 4 rows x 2 completions per prompt, 2 optimizer steps:
+
+| Environment | Flags | Rollouts / proxy calls | Turns -> training segments | Mean reward per step |
+|---|---|---|---|---|
+| `example_multi_step` | -- | 8 rollouts | 23 -> 23 | 0.50 -> 1.00 |
+| `workplace_assistant` | -- | 8 rollouts | 29 -> 29 | 0.50 -> 0.75 |
+| `toolsandbox` | `--exclude-user-simulator` | 33 proxy calls, 11 excluded as user-simulator | 22 trained | 0.915 -> 0.899 |
+
+The proxy was spied to confirm the recipe's `top_p=1.0, top_k=0` reach the
+sampler. All trainer jobs and deployments were torn down afterwards (checked
+against the Fireworks API). Two-step runs at this scale confirm the mechanics,
+not learning: reward movement between steps is noise-level. The notebook's
+rewritten setup path (no patches) was not re-run end to end; the commands it
+issues are the ones above.
 
 ## Per-step detail
 
