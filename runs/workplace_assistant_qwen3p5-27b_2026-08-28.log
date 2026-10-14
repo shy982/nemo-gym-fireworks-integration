@@ -1,0 +1,377 @@
+16:39:56 [INFO] loaded 4 NeMo Gym rows from <repo-root>/nemo-gym/resources_servers/workplace_assistant/data/example.jsonl
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+16:39:57 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+16:39:58 [INFO] recording proxy listening on 127.0.0.1:18234
+16:39:58 [INFO] proxy listening on 127.0.0.1:18234
+16:39:58 [INFO] wrote env.yaml pointing at the proxy (port 18234)
+16:39:58 [INFO] gym env start launched (pid=8810), waiting for readiness...
+16:40:23 [INFO] nemo gym servers ready; agent at http://127.0.0.1:15016
+16:40:23 [WARNING] async_rl_loop is EXPERIMENTAL and under active development; the Config / RolloutSetup API may change. See skills/fireworks-training/references/rl-async.md.
+16:40:23 [INFO] Router Replay skipped for dense model accounts/fireworks/models/qwen3p5-27b
+16:40:25 [INFO] Auto-resolved account ID: <account-id>
+16:40:25 [INFO] Creating RLOR job: POST https://api.fireworks.ai/v1/accounts/<account-id>/rlorTrainerJobs?trainingShape=accounts%2Ffireworks%2FtrainingShapes%2Fqwen3p5-27b-64k-lora%2Fversions%2Fhtutketh&rlorTrainerJobId=training-api-service-63d6b0de (model=accounts/fireworks/models/qwen3p5-27b) (payload={'serviceMode': True, 'keepAlive': False, 'dataset': '', 'trainingConfig': {'baseModel': 'accounts/fireworks/models/qwen3p5-27b', 'loraRank': 8, 'learningRate': 2.5e-05}, 'useReservation': True})
+16:40:26 [INFO] Created trainer job: training-api-service-63d6b0de
+16:40:26 [INFO] Auto-resolved account ID: <account-id>
+16:40:26 [INFO] [0s] Trainer job training-api-service-63d6b0de: state=JOB_STATE_PENDING
+16:40:26 [INFO] Creating deployment: qwen3p5-27b-1787960426
+16:40:27 [INFO] [0s] Deployment qwen3p5-27b-1787960426: CREATING
+16:41:30 [INFO] [63s] Trainer job training-api-service-63d6b0de: state=JOB_STATE_CREATING
+16:42:34 [INFO] [127s] Trainer job training-api-service-63d6b0de: state=JOB_STATE_CREATING
+16:43:37 [INFO] [191s] Trainer job training-api-service-63d6b0de: state=JOB_STATE_CREATING
+16:44:30 [INFO] [244s] Trainer job training-api-service-63d6b0de: state=JOB_STATE_RUNNING, healthz=OK -- service ready
+16:45:23 [INFO] [15s] Deployment qwen3p5-27b-1787960426: CREATING but serving requests -- treating as ready
+16:45:24 [INFO] ServiceClient initialized for session f0f3ce5950dd406581bd90381f952033
+16:45:25 [INFO] Created model rlor-562da9fbf8ad (lora_rank=8)
+16:45:25 [INFO] FiretitanTrainingClient session_id: 31912a1e
+16:45:27 [INFO] Created base-only model base-57eb458ad272 (reference)
+16:45:27 [INFO] FiretitanTrainingClient session_id: 9d0a3aca
+16:45:27 [INFO] Starting at step 0 from base model (no checkpoint)
+16:45:30 [INFO] Hotloading BASE (non-delta) snapshot 'step-0-31912a1e' to deployment 'qwen3p5-27b-1787960426'
+16:45:30 [INFO] Waiting for hotload (identity=step-0-31912a1e)...
+16:45:31 [INFO] Hotload: stage=idle, current=None, loading=step-0-31912a1e, ready=False, loaded_adapters=[] (0s)
+16:45:36 [INFO] Hotload: stage=updating, current=None, loading=step-0-31912a1e, ready=False, loaded_adapters=[] (5s)
+16:45:41 [INFO] Hotload: stage=updating, current=None, loading=step-0-31912a1e, ready=False, loaded_adapters=[] (10s)
+16:45:47 [INFO] Hotload: stage=updating, current=None, loading=step-0-31912a1e, ready=False, loaded_adapters=[] (16s)
+16:45:52 [INFO] Hotload: stage=updating, current=None, loading=step-0-31912a1e, ready=False, loaded_adapters=[] (21s)
+16:45:57 [INFO] Hotload complete: step-0-31912a1e (took 26s)
+16:45:57 [INFO] [step 0] initial weight sync (29.7s)
+16:45:57 [INFO] algorithm=grpo trainer_loss=client kl_beta=0.001
+16:45:57 [INFO] rollout_fn: rollout_id=0-0 POST http://127.0.0.1:15016/run
+16:45:57 [INFO] rollout_fn: rollout_id=0-1 POST http://127.0.0.1:15016/run
+16:45:57 [INFO] rollout_fn: rollout_id=0-2 POST http://127.0.0.1:15016/run
+16:45:57 [INFO] rollout_fn: rollout_id=0-3 POST http://127.0.0.1:15016/run
+16:45:57 [INFO] rollout_fn: rollout_id=1-0 POST http://127.0.0.1:15016/run
+16:45:57 [INFO] rollout_fn: rollout_id=1-1 POST http://127.0.0.1:15016/run
+16:45:57 [INFO] rollout_fn: rollout_id=1-2 POST http://127.0.0.1:15016/run
+16:45:57 [INFO] rollout_fn: rollout_id=1-3 POST http://127.0.0.1:15016/run
+16:45:57 [INFO] proxy: received request rollout_id=0-3 turn=0
+16:45:57 [INFO] proxy: rollout_id=0-3 decision=TurnKind.NEW prepared prompt (3981 tokens), calling sampler (+0.0s)
+16:45:57 [INFO] proxy: received request rollout_id=1-0 turn=0
+16:45:57 [INFO] proxy: rollout_id=1-0 decision=TurnKind.NEW prepared prompt (3987 tokens), calling sampler (+0.0s)
+16:45:57 [INFO] proxy: received request rollout_id=0-2 turn=0
+16:45:57 [INFO] proxy: rollout_id=0-2 decision=TurnKind.NEW prepared prompt (3981 tokens), calling sampler (+0.0s)
+16:45:57 [INFO] proxy: received request rollout_id=0-0 turn=0
+16:45:57 [INFO] proxy: rollout_id=0-0 decision=TurnKind.NEW prepared prompt (3981 tokens), calling sampler (+0.0s)
+16:45:57 [INFO] proxy: received request rollout_id=0-1 turn=0
+16:45:57 [INFO] proxy: rollout_id=0-1 decision=TurnKind.NEW prepared prompt (3981 tokens), calling sampler (+0.0s)
+16:45:57 [INFO] proxy: received request rollout_id=1-1 turn=0
+16:45:57 [INFO] proxy: rollout_id=1-1 decision=TurnKind.NEW prepared prompt (3987 tokens), calling sampler (+0.0s)
+16:45:57 [INFO] proxy: received request rollout_id=1-2 turn=0
+16:45:57 [INFO] proxy: rollout_id=1-2 decision=TurnKind.NEW prepared prompt (3987 tokens), calling sampler (+0.0s)
+16:45:57 [INFO] proxy: received request rollout_id=1-3 turn=0
+16:45:57 [INFO] proxy: rollout_id=1-3 decision=TurnKind.NEW prepared prompt (3987 tokens), calling sampler (+0.0s)
+16:46:01 [INFO] proxy: rollout_id=1-2 sampler returned 1 completions (+3.7s)
+16:46:01 [INFO] proxy: rollout_id=1-2 parsed completion: 120 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_16cf5e4e47e6415f9cf7e48c', 'function': {'name': 'email_search_emails', 'arguments': '{"query": "Task Update on Develop prototype for report generation"}'}}]
+16:46:01 [INFO] proxy: rollout_id=1-2 responding (+3.7s total)
+16:46:01 [INFO] proxy: rollout_id=1-3 sampler returned 1 completions (+3.8s)
+16:46:01 [INFO] proxy: rollout_id=1-3 parsed completion: 130 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_7af77293da2c4a96aeaaa8dc', 'function': {'name': 'email_search_emails', 'arguments': '{"query": "Task Update on Develop prototype for report generation"}'}}]
+16:46:01 [INFO] proxy: rollout_id=1-3 responding (+3.8s total)
+16:46:01 [INFO] proxy: received request rollout_id=1-2 turn=1
+16:46:01 [INFO] proxy: rollout_id=1-2 decision=TurnKind.WIPE prepared prompt (4625 tokens), calling sampler (+0.0s)
+16:46:01 [INFO] proxy: received request rollout_id=1-3 turn=1
+16:46:01 [INFO] proxy: rollout_id=1-3 decision=TurnKind.WIPE prepared prompt (4625 tokens), calling sampler (+0.0s)
+16:46:01 [INFO] proxy: rollout_id=1-1 sampler returned 1 completions (+3.9s)
+16:46:01 [INFO] proxy: rollout_id=1-1 parsed completion: 147 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_9159572a56c04560b6f3fd2b', 'function': {'name': 'email_search_emails', 'arguments': '{"query": "Task Update on Develop prototype for report generation"}'}}]
+16:46:01 [INFO] proxy: rollout_id=1-1 responding (+3.9s total)
+16:46:01 [INFO] proxy: rollout_id=0-1 sampler returned 1 completions (+3.9s)
+16:46:01 [INFO] proxy: rollout_id=0-1 parsed completion: 171 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_3b192c2bc4ba4fe8ba7c5c3d', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Akira"}'}}]
+16:46:01 [INFO] proxy: rollout_id=0-1 responding (+3.9s total)
+16:46:01 [INFO] proxy: received request rollout_id=1-1 turn=1
+16:46:01 [INFO] proxy: rollout_id=1-1 decision=TurnKind.WIPE prepared prompt (4625 tokens), calling sampler (+0.0s)
+16:46:01 [INFO] proxy: received request rollout_id=0-1 turn=1
+16:46:01 [INFO] proxy: rollout_id=0-1 decision=TurnKind.WIPE prepared prompt (4041 tokens), calling sampler (+0.0s)
+16:46:01 [INFO] proxy: rollout_id=0-0 sampler returned 1 completions (+4.0s)
+16:46:01 [INFO] proxy: rollout_id=0-0 parsed completion: 189 output_tokens, content='\n', tool_calls=[{'type': 'function', 'id': 'call_e551fb1cdbed454bba9d7917', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Akira"}'}}, {'type': 'function', 'id': 'call_2b4017033ccb4af7ae480d85', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Raj"}'}}]
+16:46:01 [INFO] proxy: rollout_id=0-0 responding (+4.0s total)
+16:46:01 [INFO] proxy: received request rollout_id=0-0 turn=1
+16:46:01 [INFO] proxy: rollout_id=0-0 decision=TurnKind.WIPE prepared prompt (4091 tokens), calling sampler (+0.0s)
+16:46:01 [INFO] proxy: rollout_id=1-0 sampler returned 1 completions (+4.0s)
+16:46:01 [INFO] proxy: rollout_id=1-0 parsed completion: 150 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_1ae293b882494c7b94e11799', 'function': {'name': 'email_search_emails', 'arguments': '{"query": "Task Update on Develop prototype for report generation"}'}}]
+16:46:01 [INFO] proxy: rollout_id=1-0 responding (+4.0s total)
+16:46:01 [INFO] proxy: received request rollout_id=1-0 turn=1
+16:46:01 [INFO] proxy: rollout_id=1-0 decision=TurnKind.WIPE prepared prompt (4625 tokens), calling sampler (+0.0s)
+16:46:02 [INFO] proxy: rollout_id=0-3 sampler returned 1 completions (+4.2s)
+16:46:02 [INFO] proxy: rollout_id=0-3 parsed completion: 224 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_13e6db6cbb0d461e9ed025b0', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Akira"}'}}]
+16:46:02 [INFO] proxy: rollout_id=0-3 responding (+4.2s total)
+16:46:02 [INFO] proxy: received request rollout_id=0-3 turn=1
+16:46:02 [INFO] proxy: rollout_id=0-3 decision=TurnKind.WIPE prepared prompt (4041 tokens), calling sampler (+0.0s)
+16:46:02 [INFO] Deployment not ready (HTTP 404), retry 1/10 in 5s...
+16:46:02 [INFO] proxy: rollout_id=0-1 sampler returned 1 completions (+1.0s)
+16:46:02 [INFO] proxy: rollout_id=0-1 parsed completion: 32 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_133ad3cb3340424b81156b32', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Raj"}'}}]
+16:46:02 [INFO] proxy: rollout_id=0-1 responding (+1.0s total)
+16:46:02 [INFO] proxy: received request rollout_id=0-1 turn=2
+16:46:02 [INFO] proxy: rollout_id=0-1 decision=TurnKind.WIPE prepared prompt (4100 tokens), calling sampler (+0.0s)
+16:46:02 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+5.0s)
+16:46:02 [INFO] proxy: rollout_id=0-2 parsed completion: 256 output_tokens, content='\n<tool_call>\n<function=company_directory_find_email_address>\n<parameter=name', tool_calls=[{'type': 'function', 'id': 'call_e4bc3a2b02ff458abf6f34f1', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Akira"}'}}]
+16:46:02 [INFO] proxy: rollout_id=0-2 responding (+5.0s total)
+16:46:02 [INFO] proxy: rollout_id=1-2 sampler returned 1 completions (+1.2s)
+16:46:02 [INFO] proxy: rollout_id=1-2 parsed completion: 60 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_b239159be4f54bb4b28cab49', 'function': {'name': 'email_reply_email', 'arguments': '{"email_id": "00000057", "body": "Thanks for the update - I will get back to you tomorrow."}'}}]
+16:46:02 [INFO] proxy: rollout_id=1-2 responding (+1.2s total)
+16:46:02 [INFO] proxy: received request rollout_id=0-2 turn=1
+16:46:02 [INFO] proxy: rollout_id=0-2 decision=TurnKind.WIPE prepared prompt (4057 tokens), calling sampler (+0.0s)
+16:46:02 [INFO] proxy: received request rollout_id=1-2 turn=2
+16:46:02 [INFO] proxy: rollout_id=1-2 decision=TurnKind.WIPE prepared prompt (4709 tokens), calling sampler (+0.0s)
+16:46:02 [INFO] proxy: rollout_id=0-0 sampler returned 1 completions (+1.1s)
+16:46:02 [INFO] proxy: rollout_id=0-0 parsed completion: 55 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_e35ba6deaa724a5288363133', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "akira.sato@atlas.com", "product_interest": "Software"}'}}]
+16:46:02 [INFO] proxy: rollout_id=0-0 responding (+1.1s total)
+16:46:02 [INFO] proxy: rollout_id=1-3 sampler returned 1 completions (+1.3s)
+16:46:02 [INFO] proxy: rollout_id=1-3 parsed completion: 60 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_4873b366c3194b1cbab4ac4a', 'function': {'name': 'email_reply_email', 'arguments': '{"email_id": "00000057", "body": "Thanks for the update - I will get back to you tomorrow."}'}}]
+16:46:02 [INFO] proxy: rollout_id=1-3 responding (+1.3s total)
+16:46:02 [INFO] proxy: received request rollout_id=0-0 turn=2
+16:46:02 [INFO] proxy: rollout_id=0-0 decision=TurnKind.WIPE prepared prompt (4902 tokens), calling sampler (+0.0s)
+16:46:02 [INFO] proxy: received request rollout_id=1-3 turn=2
+16:46:02 [INFO] proxy: rollout_id=1-3 decision=TurnKind.WIPE prepared prompt (4709 tokens), calling sampler (+0.0s)
+16:46:03 [INFO] proxy: rollout_id=1-1 sampler returned 1 completions (+1.2s)
+16:46:03 [INFO] proxy: rollout_id=1-1 parsed completion: 60 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_44b0734d2aac4f57967c0236', 'function': {'name': 'email_reply_email', 'arguments': '{"email_id": "00000057", "body": "Thanks for the update - I will get back to you tomorrow."}'}}]
+16:46:03 [INFO] proxy: rollout_id=1-1 responding (+1.2s total)
+16:46:03 [INFO] proxy: received request rollout_id=1-1 turn=2
+16:46:03 [INFO] proxy: rollout_id=1-1 decision=TurnKind.WIPE prepared prompt (4709 tokens), calling sampler (+0.0s)
+16:46:03 [INFO] proxy: rollout_id=1-1 sampler returned 1 completions (+0.6s)
+16:46:03 [INFO] proxy: rollout_id=1-1 parsed completion: 13 output_tokens, content='The email to Carlos has been replied to successfully.', tool_calls=None
+16:46:03 [INFO] proxy: rollout_id=1-1 responding (+0.6s total)
+16:46:03 [INFO] rollout_fn: rollout_id=1-1 got response (+6.1s) reward=1.0
+16:46:03 [INFO] proxy: rollout_id=1-3 sampler returned 1 completions (+0.8s)
+16:46:03 [INFO] proxy: rollout_id=1-3 parsed completion: 51 output_tokens, content="Your reply to Carlos's email about the task update has been sent successfully.", tool_calls=None
+16:46:03 [INFO] proxy: rollout_id=1-3 responding (+0.8s total)
+16:46:03 [INFO] proxy: rollout_id=1-2 sampler returned 1 completions (+0.9s)
+16:46:03 [INFO] proxy: rollout_id=1-2 parsed completion: 40 output_tokens, content="I have replied to Carlos's last email regarding 'Task Update on Develop prototype for report generation' with the message: 'Thanks for the update - I will get back to you tomorrow.'", tool_calls=None
+16:46:03 [INFO] proxy: rollout_id=1-2 responding (+0.9s total)
+16:46:03 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+0.9s)
+16:46:03 [INFO] proxy: rollout_id=0-2 parsed completion: 52 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_0bb298264b6643608b0a1f4c', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Raj"}'}}]
+16:46:03 [INFO] proxy: rollout_id=0-2 responding (+0.9s total)
+16:46:03 [INFO] rollout_fn: rollout_id=1-3 got response (+6.2s) reward=1.0
+16:46:03 [INFO] proxy: rollout_id=0-1 sampler returned 1 completions (+1.0s)
+16:46:03 [INFO] proxy: rollout_id=0-1 parsed completion: 55 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_cbd9665cbe5c4d83b97f7da9', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"product_interest": "Software", "assigned_to_email": "akira.sato@atlas.com"}'}}]
+16:46:03 [INFO] proxy: rollout_id=0-1 responding (+1.0s total)
+16:46:03 [INFO] rollout_fn: rollout_id=1-2 got response (+6.2s) reward=1.0
+16:46:03 [INFO] proxy: received request rollout_id=0-2 turn=2
+16:46:03 [INFO] proxy: rollout_id=0-2 decision=TurnKind.WIPE prepared prompt (4116 tokens), calling sampler (+0.0s)
+16:46:03 [INFO] proxy: received request rollout_id=0-1 turn=3
+16:46:03 [INFO] proxy: rollout_id=0-1 decision=TurnKind.WIPE prepared prompt (4911 tokens), calling sampler (+0.0s)
+16:46:04 [INFO] proxy: rollout_id=0-0 sampler returned 1 completions (+1.1s)
+16:46:04 [INFO] proxy: rollout_id=0-0 parsed completion: 109 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_7347412c00c7403a8fdc6540', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "akira.sato@atlas.com", "product_interest": "Software", "page": 2}'}}]
+16:46:04 [INFO] proxy: rollout_id=0-0 responding (+1.1s total)
+16:46:04 [INFO] proxy: received request rollout_id=0-0 turn=3
+16:46:04 [INFO] proxy: rollout_id=0-0 decision=TurnKind.WIPE prepared prompt (5538 tokens), calling sampler (+0.0s)
+16:46:04 [INFO] proxy: rollout_id=1-0 sampler returned 1 completions (+2.3s)
+16:46:04 [INFO] proxy: rollout_id=1-0 parsed completion: 256 output_tokens, content='<tool_call>\n<function=email_reply_email>\n<parameter=email_id>\n00000057\n</parameter>\n<parameter=body>\nThanks for the update - I will get back to you tomorrow.\n</parameter>\n</function>\n', tool_calls=None
+16:46:04 [INFO] proxy: rollout_id=1-0 responding (+2.3s total)
+16:46:04 [INFO] rollout_fn: rollout_id=1-0 got response (+6.6s) reward=0.0
+16:46:04 [INFO] proxy: rollout_id=0-1 sampler returned 1 completions (+1.0s)
+16:46:04 [INFO] proxy: rollout_id=0-1 parsed completion: 111 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_c957025047474a29a0082092', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"product_interest": "Software", "assigned_to_email": "akira.sato@atlas.com", "page": 2}'}}]
+16:46:04 [INFO] proxy: rollout_id=0-1 responding (+1.0s total)
+16:46:04 [INFO] proxy: received request rollout_id=0-1 turn=4
+16:46:04 [INFO] proxy: rollout_id=0-1 decision=TurnKind.WIPE prepared prompt (5547 tokens), calling sampler (+0.0s)
+16:46:04 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+1.0s)
+16:46:04 [INFO] proxy: rollout_id=0-2 parsed completion: 106 output_tokens, content="I've found the email addresses for both Akira (akira.sato@atlas.com) and Raj (raj.patel@atlas.com). Now, I'll search for all leads assigned to Akira that are interested in 'Software'.\n\n", tool_calls=[{'type': 'function', 'id': 'call_9ecabf5a098d4837a4f181ed', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "akira.sato@atlas.com", "product_interest": "Software"}'}}]
+16:46:04 [INFO] proxy: rollout_id=0-2 responding (+1.0s total)
+16:46:04 [INFO] proxy: received request rollout_id=0-2 turn=3
+16:46:04 [INFO] proxy: rollout_id=0-2 decision=TurnKind.WIPE prepared prompt (4977 tokens), calling sampler (+0.0s)
+16:46:05 [INFO] proxy: rollout_id=0-1 sampler returned 1 completions (+0.9s)
+16:46:05 [INFO] proxy: rollout_id=0-1 parsed completion: 72 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_4996cb956c1c4d56972ef77e', 'function': {'name': 'customer_relationship_manager_update_customer', 'arguments': '{"customer_id": "00000044", "field": "assigned_to_email", "new_value": "raj.patel@atlas.com"}'}}]
+16:46:05 [INFO] proxy: rollout_id=0-1 responding (+0.9s total)
+16:46:05 [INFO] proxy: received request rollout_id=0-1 turn=5
+16:46:05 [INFO] proxy: rollout_id=0-1 decision=TurnKind.WIPE prepared prompt (5643 tokens), calling sampler (+0.0s)
+16:46:05 [INFO] proxy: rollout_id=0-0 sampler returned 1 completions (+1.7s)
+16:46:05 [INFO] proxy: rollout_id=0-0 parsed completion: 256 output_tokens, content='Now I will reassign all the identified customers to Raj (raj.patel@atlas.com).\n\n\n\n\n<tool_call>\n<function=customer_relationship_manager_update_customer>\n<parameter=customer_id>\n0000', tool_calls=[{'type': 'function', 'id': 'call_7edf712280474bd4890088f1', 'function': {'name': 'customer_relationship_manager_update_customer', 'arguments': '{"customer_id": "00000044", "field": "assigned_to_email", "new_value": "raj.patel@atlas.com"}'}}, {'type': 'function', 'id': 'call_b9835c2cedec442e815d805a', 'function': {'name': 'customer_relationship_manager_update_customer', 'arguments': '{"customer_id": "00000001", "field": "assigned_to_email", "new_value": "raj.patel@atlas.com"}'}}, {'type': 'function', 'id': 'call_47b3fff0b9644aac978326a7', 'function': {'name': 'customer_relationship_manager_update_customer', 'arguments': '{"customer_id": "00000070", "field": "assigned_to_email", "new_value": "raj.patel@atlas.com"}'}}]
+16:46:05 [INFO] proxy: rollout_id=0-0 responding (+1.7s total)
+16:46:05 [INFO] proxy: received request rollout_id=0-0 turn=4
+16:46:05 [INFO] proxy: rollout_id=0-0 decision=TurnKind.WIPE prepared prompt (5852 tokens), calling sampler (+0.0s)
+16:46:05 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+0.9s)
+16:46:05 [INFO] proxy: rollout_id=0-2 parsed completion: 67 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_ad210fb794f44a78b342ad6c', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "akira.sato@atlas.com", "product_interest": "Software", "page": 2}'}}]
+16:46:05 [INFO] proxy: rollout_id=0-2 responding (+0.9s total)
+16:46:05 [INFO] proxy: received request rollout_id=0-2 turn=4
+16:46:05 [INFO] proxy: rollout_id=0-2 decision=TurnKind.WIPE prepared prompt (5613 tokens), calling sampler (+0.0s)
+16:46:06 [INFO] proxy: rollout_id=0-0 sampler returned 1 completions (+0.7s)
+16:46:06 [INFO] proxy: rollout_id=0-0 parsed completion: 21 output_tokens, content='All customers are now reasigned to Raj. What else can I help you with?', tool_calls=None
+16:46:06 [INFO] proxy: rollout_id=0-0 responding (+0.7s total)
+16:46:06 [INFO] rollout_fn: rollout_id=0-0 got response (+8.9s) reward=0.0
+16:46:06 [INFO] proxy: rollout_id=0-1 sampler returned 1 completions (+1.0s)
+16:46:06 [INFO] proxy: rollout_id=0-1 parsed completion: 91 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_cb40a5168ec44028b3abbe7e', 'function': {'name': 'customer_relationship_manager_update_customer', 'arguments': '{"customer_id": "00000001", "field": "assigned_to_email", "new_value": "raj.patel@atlas.com"}'}}]
+16:46:06 [INFO] proxy: rollout_id=0-1 responding (+1.0s total)
+16:46:06 [INFO] rollout_fn: rollout_id=0-1 got response (+9.1s) reward=0.0
+16:46:07 [INFO] proxy: rollout_id=0-2 sampler returned 1 completions (+1.4s)
+16:46:07 [INFO] proxy: rollout_id=0-2 parsed completion: 256 output_tokens, content='<tool_call>\n<function=customer_relationship_manager_update_customer>\n<parameter=customer_id>\n0000004', tool_calls=None
+16:46:07 [INFO] proxy: rollout_id=0-2 responding (+1.4s total)
+16:46:07 [INFO] rollout_fn: rollout_id=0-2 got response (+9.6s) reward=0.0
+16:46:07 [INFO] proxy: rollout_id=0-3 sampler returned 1 completions (+5.7s)
+16:46:07 [INFO] proxy: rollout_id=0-3 parsed completion: 57 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_f0dd080e2d4646cb884342dc', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Raj"}'}}]
+16:46:07 [INFO] proxy: rollout_id=0-3 responding (+5.7s total)
+16:46:07 [INFO] proxy: received request rollout_id=0-3 turn=2
+16:46:07 [INFO] proxy: rollout_id=0-3 decision=TurnKind.WIPE prepared prompt (4100 tokens), calling sampler (+0.0s)
+16:46:08 [INFO] proxy: rollout_id=0-3 sampler returned 1 completions (+0.7s)
+16:46:08 [INFO] proxy: rollout_id=0-3 parsed completion: 92 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_c9dd6cde2f124f5d987344f8', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "akira.sato@atlas.com", "product_interest": "Software"}'}}]
+16:46:08 [INFO] proxy: rollout_id=0-3 responding (+0.7s total)
+16:46:08 [INFO] proxy: received request rollout_id=0-3 turn=3
+16:46:08 [INFO] proxy: rollout_id=0-3 decision=TurnKind.WIPE prepared prompt (4911 tokens), calling sampler (+0.0s)
+16:46:09 [INFO] proxy: rollout_id=0-3 sampler returned 1 completions (+0.8s)
+16:46:09 [INFO] proxy: rollout_id=0-3 parsed completion: 104 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_5e24fb4f54f045508b8b0914', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "akira.sato@atlas.com", "product_interest": "Software", "page": 2}'}}]
+16:46:09 [INFO] proxy: rollout_id=0-3 responding (+0.8s total)
+16:46:09 [INFO] proxy: received request rollout_id=0-3 turn=4
+16:46:09 [INFO] proxy: rollout_id=0-3 decision=TurnKind.WIPE prepared prompt (5547 tokens), calling sampler (+0.0s)
+16:46:09 [INFO] proxy: rollout_id=0-3 sampler returned 1 completions (+0.7s)
+16:46:09 [INFO] proxy: rollout_id=0-3 parsed completion: 72 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_029d94722cce4a6e8820c17d', 'function': {'name': 'customer_relationship_manager_update_customer', 'arguments': '{"customer_id": "00000044", "field": "assigned_to_email", "new_value": "raj.patel@atlas.com"}'}}]
+16:46:09 [INFO] proxy: rollout_id=0-3 responding (+0.7s total)
+16:46:09 [INFO] proxy: received request rollout_id=0-3 turn=5
+16:46:09 [INFO] proxy: rollout_id=0-3 decision=TurnKind.WIPE prepared prompt (5643 tokens), calling sampler (+0.0s)
+16:46:10 [INFO] proxy: rollout_id=0-3 sampler returned 1 completions (+0.7s)
+16:46:10 [INFO] proxy: rollout_id=0-3 parsed completion: 72 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_3eb420b9c52a457a93676b8d', 'function': {'name': 'customer_relationship_manager_update_customer', 'arguments': '{"customer_id": "00000001", "field": "assigned_to_email", "new_value": "raj.patel@atlas.com"}'}}]
+16:46:10 [INFO] proxy: rollout_id=0-3 responding (+0.7s total)
+16:46:10 [INFO] rollout_fn: rollout_id=0-3 got response (+12.9s) reward=0.0
+16:47:06 [INFO] Hotloading BASE (non-delta) snapshot 'step-1-31912a1e' to deployment 'qwen3p5-27b-1787960426'
+16:47:07 [INFO] Waiting for hotload (identity=step-1-31912a1e)...
+16:47:07 [INFO] Hotload: stage=idle, current=step-0-31912a1e, loading=step-1-31912a1e, ready=True, loaded_adapters=[] (0s)
+16:47:12 [INFO] Hotload: stage=updating, current=step-0-31912a1e, loading=step-1-31912a1e, ready=False, loaded_adapters=[] (5s)
+16:47:17 [INFO] Hotload: stage=updating, current=step-0-31912a1e, loading=step-1-31912a1e, ready=False, loaded_adapters=[] (10s)
+16:47:23 [INFO] Hotload: stage=updating, current=step-0-31912a1e, loading=step-1-31912a1e, ready=False, loaded_adapters=[] (16s)
+16:47:28 [INFO] Hotload: stage=updating, current=step-0-31912a1e, loading=step-1-31912a1e, ready=False, loaded_adapters=[] (21s)
+16:47:33 [INFO] Hotload complete: step-1-31912a1e (took 26s)
+16:47:33 [INFO] Rollout 1 | Reward raw 0.375 filtered 0.375 | Samples raw 8 filtered 8 | Filter 0.0% | RefKL 0.0000
+16:47:33 [INFO] rollout_fn: rollout_id=2-0 POST http://127.0.0.1:15016/run
+16:47:33 [INFO] rollout_fn: rollout_id=2-1 POST http://127.0.0.1:15016/run
+16:47:33 [INFO] rollout_fn: rollout_id=2-2 POST http://127.0.0.1:15016/run
+16:47:33 [INFO] rollout_fn: rollout_id=2-3 POST http://127.0.0.1:15016/run
+16:47:33 [INFO] rollout_fn: rollout_id=3-0 POST http://127.0.0.1:15016/run
+16:47:33 [INFO] rollout_fn: rollout_id=3-1 POST http://127.0.0.1:15016/run
+16:47:33 [INFO] rollout_fn: rollout_id=3-2 POST http://127.0.0.1:15016/run
+16:47:33 [INFO] rollout_fn: rollout_id=3-3 POST http://127.0.0.1:15016/run
+16:47:33 [INFO] proxy: received request rollout_id=2-0 turn=0
+16:47:33 [INFO] proxy: rollout_id=2-0 decision=TurnKind.NEW prepared prompt (3971 tokens), calling sampler (+0.0s)
+16:47:33 [INFO] proxy: received request rollout_id=2-1 turn=0
+16:47:33 [INFO] proxy: rollout_id=2-1 decision=TurnKind.NEW prepared prompt (3971 tokens), calling sampler (+0.0s)
+16:47:33 [INFO] proxy: received request rollout_id=2-2 turn=0
+16:47:33 [INFO] proxy: rollout_id=2-2 decision=TurnKind.NEW prepared prompt (3971 tokens), calling sampler (+0.0s)
+16:47:33 [INFO] proxy: received request rollout_id=2-3 turn=0
+16:47:33 [INFO] proxy: rollout_id=2-3 decision=TurnKind.NEW prepared prompt (3971 tokens), calling sampler (+0.0s)
+16:47:33 [INFO] proxy: received request rollout_id=3-0 turn=0
+16:47:33 [INFO] proxy: rollout_id=3-0 decision=TurnKind.NEW prepared prompt (3985 tokens), calling sampler (+0.0s)
+16:47:33 [INFO] proxy: received request rollout_id=3-1 turn=0
+16:47:33 [INFO] proxy: rollout_id=3-1 decision=TurnKind.NEW prepared prompt (3985 tokens), calling sampler (+0.0s)
+16:47:33 [INFO] proxy: received request rollout_id=3-2 turn=0
+16:47:33 [INFO] proxy: rollout_id=3-2 decision=TurnKind.NEW prepared prompt (3985 tokens), calling sampler (+0.0s)
+16:47:33 [INFO] proxy: received request rollout_id=3-3 turn=0
+16:47:33 [INFO] proxy: rollout_id=3-3 decision=TurnKind.NEW prepared prompt (3985 tokens), calling sampler (+0.0s)
+16:47:35 [INFO] proxy: rollout_id=3-2 sampler returned 1 completions (+1.5s)
+16:47:35 [INFO] proxy: rollout_id=3-2 parsed completion: 127 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_ef784ada0e804956ad0f8811', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Lena"}'}}]
+16:47:35 [INFO] proxy: rollout_id=3-2 responding (+1.6s total)
+16:47:35 [INFO] proxy: rollout_id=3-3 sampler returned 1 completions (+1.6s)
+16:47:35 [INFO] proxy: rollout_id=3-3 parsed completion: 124 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_fdd707e1bff143e9976efd01', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Lena"}'}}]
+16:47:35 [INFO] proxy: rollout_id=3-3 responding (+1.6s total)
+16:47:35 [INFO] proxy: rollout_id=3-1 sampler returned 1 completions (+1.6s)
+16:47:35 [INFO] proxy: rollout_id=3-1 parsed completion: 123 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_3d8b55300e464fafba1a9f6f', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Lena"}'}}]
+16:47:35 [INFO] proxy: rollout_id=3-1 responding (+1.6s total)
+16:47:35 [INFO] proxy: received request rollout_id=3-2 turn=1
+16:47:35 [INFO] proxy: rollout_id=3-2 decision=TurnKind.WIPE prepared prompt (4045 tokens), calling sampler (+0.0s)
+16:47:35 [INFO] proxy: received request rollout_id=3-3 turn=1
+16:47:35 [INFO] proxy: rollout_id=3-3 decision=TurnKind.WIPE prepared prompt (4045 tokens), calling sampler (+0.0s)
+16:47:35 [INFO] proxy: received request rollout_id=3-1 turn=1
+16:47:35 [INFO] proxy: rollout_id=3-1 decision=TurnKind.WIPE prepared prompt (4045 tokens), calling sampler (+0.0s)
+16:47:35 [INFO] proxy: rollout_id=3-0 sampler returned 1 completions (+1.6s)
+16:47:35 [INFO] proxy: rollout_id=3-0 parsed completion: 139 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_b1929578390f420caa70b23c', 'function': {'name': 'company_directory_find_email_address', 'arguments': '{"name": "Lena"}'}}]
+16:47:35 [INFO] proxy: rollout_id=3-0 responding (+1.6s total)
+16:47:35 [INFO] proxy: received request rollout_id=3-0 turn=1
+16:47:35 [INFO] proxy: rollout_id=3-0 decision=TurnKind.WIPE prepared prompt (4045 tokens), calling sampler (+0.0s)
+16:47:36 [INFO] proxy: rollout_id=2-2 sampler returned 1 completions (+2.2s)
+16:47:36 [INFO] proxy: rollout_id=2-2 parsed completion: 256 output_tokens, content='The user wants to change the name of the last event on December 1 to "Risk Management Forum". To do this, I need to:\n\n1. First search for events on December 1, 2023 (since today is 2023-11-30)\n2. Find', tool_calls=None
+16:47:36 [INFO] proxy: rollout_id=2-2 responding (+2.2s total)
+16:47:36 [INFO] rollout_fn: rollout_id=2-2 got response (+2.3s) reward=0.0
+16:47:36 [INFO] proxy: rollout_id=3-2 sampler returned 1 completions (+0.9s)
+16:47:36 [INFO] proxy: rollout_id=3-2 parsed completion: 66 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_08ea1f0ee6394879aa90eb2f', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "lena.schmidt@atlas.com", "status": "Won", "product_interest": "Services"}'}}]
+16:47:36 [INFO] proxy: rollout_id=3-2 responding (+0.9s total)
+16:47:36 [INFO] proxy: rollout_id=3-1 sampler returned 1 completions (+0.8s)
+16:47:36 [INFO] proxy: rollout_id=3-1 parsed completion: 66 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_e96ed4dd7e5d47f4ac053221', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "lena.schmidt@atlas.com", "status": "Won", "product_interest": "Services"}'}}]
+16:47:36 [INFO] proxy: rollout_id=3-1 responding (+0.8s total)
+16:47:36 [INFO] proxy: rollout_id=3-3 sampler returned 1 completions (+0.9s)
+16:47:36 [INFO] proxy: rollout_id=3-3 parsed completion: 66 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_b64bc1a1e8e84d39b7dac2bc', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "lena.schmidt@atlas.com", "status": "Won", "product_interest": "Services"}'}}]
+16:47:36 [INFO] proxy: rollout_id=3-3 responding (+0.9s total)
+16:47:36 [INFO] proxy: received request rollout_id=3-2 turn=2
+16:47:36 [INFO] proxy: rollout_id=3-2 decision=TurnKind.WIPE prepared prompt (4711 tokens), calling sampler (+0.0s)
+16:47:36 [INFO] proxy: received request rollout_id=3-1 turn=2
+16:47:36 [INFO] proxy: rollout_id=3-1 decision=TurnKind.WIPE prepared prompt (4711 tokens), calling sampler (+0.0s)
+16:47:36 [INFO] proxy: received request rollout_id=3-3 turn=2
+16:47:36 [INFO] proxy: rollout_id=3-3 decision=TurnKind.WIPE prepared prompt (4711 tokens), calling sampler (+0.0s)
+16:47:36 [INFO] proxy: rollout_id=2-0 sampler returned 1 completions (+2.5s)
+16:47:36 [INFO] proxy: rollout_id=2-0 parsed completion: 256 output_tokens, content='The user wants to change the name of the last event on December 1 to "Risk Management Forum". To do this, I need to:\n\n1. First, find all events on December 1, 2023\n2. Identify the last event (likely b', tool_calls=None
+16:47:36 [INFO] proxy: rollout_id=2-0 responding (+2.5s total)
+16:47:36 [INFO] proxy: rollout_id=2-1 sampler returned 1 completions (+2.5s)
+16:47:36 [INFO] proxy: rollout_id=2-1 parsed completion: 256 output_tokens, content='The user wants to change the name of the last event on December 1 to "Risk Management Forum". \n\nFirst, I need to search for events on December 1 to find the last event. I should use the calendar_searc', tool_calls=None
+16:47:36 [INFO] proxy: rollout_id=2-1 responding (+2.5s total)
+16:47:36 [INFO] rollout_fn: rollout_id=2-0 got response (+2.6s) reward=0.0
+16:47:36 [INFO] rollout_fn: rollout_id=2-1 got response (+2.6s) reward=0.0
+16:47:36 [INFO] proxy: rollout_id=2-3 sampler returned 1 completions (+2.6s)
+16:47:36 [INFO] proxy: rollout_id=2-3 parsed completion: 256 output_tokens, content='The user wants to change the name of the last event on December 1 to "Risk Management Forum". To do this, I need to:\n\n1. First search for events on December 1, 2023 to find the last event\n2. Get the e', tool_calls=None
+16:47:36 [INFO] proxy: rollout_id=2-3 responding (+2.6s total)
+16:47:36 [INFO] rollout_fn: rollout_id=2-3 got response (+2.7s) reward=0.0
+16:47:36 [INFO] proxy: rollout_id=3-0 sampler returned 1 completions (+1.0s)
+16:47:36 [INFO] proxy: rollout_id=3-0 parsed completion: 107 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_6dccd8c03198435bade809f4', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "lena.schmidt@atlas.com", "status": "Won", "product_interest": "Services"}'}}]
+16:47:36 [INFO] proxy: rollout_id=3-0 responding (+1.0s total)
+16:47:36 [INFO] proxy: received request rollout_id=3-0 turn=2
+16:47:36 [INFO] proxy: rollout_id=3-0 decision=TurnKind.WIPE prepared prompt (4711 tokens), calling sampler (+0.0s)
+16:47:37 [INFO] proxy: rollout_id=3-0 sampler returned 1 completions (+1.1s)
+16:47:37 [INFO] proxy: rollout_id=3-0 parsed completion: 156 output_tokens, content='\n\n\n', tool_calls=[{'type': 'function', 'id': 'call_a3eef35feb5b45c393a9e6e1', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000009"}'}}, {'type': 'function', 'id': 'call_e5fd3389731f45548234ce76', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000112"}'}}, {'type': 'function', 'id': 'call_40a58b7175354556bc0144aa', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000039"}'}}, {'type': 'function', 'id': 'call_a742e51998e74d8fbfc2fa13', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000047"}'}}]
+16:47:37 [INFO] proxy: rollout_id=3-0 responding (+1.1s total)
+16:47:37 [INFO] proxy: received request rollout_id=3-0 turn=3
+16:47:37 [INFO] proxy: rollout_id=3-0 decision=TurnKind.WIPE prepared prompt (4940 tokens), calling sampler (+0.0s)
+16:47:37 [INFO] proxy: rollout_id=3-2 sampler returned 1 completions (+1.4s)
+16:47:37 [INFO] proxy: rollout_id=3-2 parsed completion: 256 output_tokens, content='\n\n\n<tool_call>\n<function=customer_relationship_manager_delete_customer>\n<parameter=customer_id>\n00000047\n</parameter>\n</', tool_calls=[{'type': 'function', 'id': 'call_69f3a483cdca4cddab1b7a23', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000009"}'}}, {'type': 'function', 'id': 'call_b790cd7539cc4fb99531a748', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000112"}'}}, {'type': 'function', 'id': 'call_eea7703260694499a325b272', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000039"}'}}]
+16:47:37 [INFO] proxy: rollout_id=3-2 responding (+1.4s total)
+16:47:37 [INFO] proxy: received request rollout_id=3-2 turn=3
+16:47:37 [INFO] proxy: rollout_id=3-2 decision=TurnKind.WIPE prepared prompt (4919 tokens), calling sampler (+0.0s)
+16:47:37 [INFO] proxy: rollout_id=3-1 sampler returned 1 completions (+1.5s)
+16:47:37 [INFO] proxy: rollout_id=3-1 parsed completion: 256 output_tokens, content='\n\n\n<tool_call>\n<function=customer_relationship_manager_delete_customer>\n<parameter=', tool_calls=[{'type': 'function', 'id': 'call_2b66885c563e471bb5e88e47', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000009"}'}}, {'type': 'function', 'id': 'call_000b681eccc14a1f905a1087', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000112"}'}}, {'type': 'function', 'id': 'call_78583f2784394fb49cf49cba', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000039"}'}}]
+16:47:37 [INFO] proxy: rollout_id=3-1 responding (+1.5s total)
+16:47:37 [INFO] proxy: received request rollout_id=3-1 turn=3
+16:47:37 [INFO] proxy: rollout_id=3-1 decision=TurnKind.WIPE prepared prompt (4901 tokens), calling sampler (+0.0s)
+16:47:37 [INFO] proxy: rollout_id=3-3 sampler returned 1 completions (+1.5s)
+16:47:37 [INFO] proxy: rollout_id=3-3 parsed completion: 256 output_tokens, content='\n\n\n', tool_calls=[{'type': 'function', 'id': 'call_80c58497335a48aaba2f4c6c', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000009"}'}}, {'type': 'function', 'id': 'call_300f0e69a34b42eea95eae0e', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000112"}'}}, {'type': 'function', 'id': 'call_e36a4e12ef7a443199f88665', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000039"}'}}, {'type': 'function', 'id': 'call_3cc2632c30f74a45adae76f8', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000047"}'}}]
+16:47:37 [INFO] proxy: rollout_id=3-3 responding (+1.5s total)
+16:47:37 [INFO] proxy: received request rollout_id=3-3 turn=3
+16:47:37 [INFO] proxy: rollout_id=3-3 decision=TurnKind.WIPE prepared prompt (4940 tokens), calling sampler (+0.0s)
+16:47:38 [INFO] proxy: rollout_id=3-1 sampler returned 1 completions (+0.8s)
+16:47:38 [INFO] proxy: rollout_id=3-1 parsed completion: 40 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_9c8c8812809145aaa1b05b00', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000047"}'}}]
+16:47:38 [INFO] proxy: rollout_id=3-1 responding (+0.8s total)
+16:47:38 [INFO] proxy: received request rollout_id=3-1 turn=4
+16:47:38 [INFO] proxy: rollout_id=3-1 decision=TurnKind.WIPE prepared prompt (4965 tokens), calling sampler (+0.0s)
+16:47:38 [INFO] proxy: rollout_id=3-2 sampler returned 1 completions (+0.9s)
+16:47:38 [INFO] proxy: rollout_id=3-2 parsed completion: 51 output_tokens, content='I have successfully deleted the following 4 customers from Lena Schmidt\'s list who were in the "Won" status and interested in "Services":\n\n*   Cameron Brown\n*   Parker Garcia\n*   Dakota Anderson\n*   R', tool_calls=None
+16:47:38 [INFO] proxy: rollout_id=3-2 responding (+0.9s total)
+16:47:38 [INFO] proxy: rollout_id=3-0 sampler returned 1 completions (+1.0s)
+16:47:38 [INFO] proxy: rollout_id=3-0 parsed completion: 66 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_bf8f19ac626d47cb8a55927d', 'function': {'name': 'customer_relationship_manager_search_customers', 'arguments': '{"assigned_to_email": "lena.schmidt@atlas.com", "status": "Won", "product_interest": "Services"}'}}]
+16:47:38 [INFO] proxy: rollout_id=3-0 responding (+1.0s total)
+16:47:38 [INFO] rollout_fn: rollout_id=3-2 got response (+4.9s) reward=0.0
+16:47:38 [INFO] proxy: received request rollout_id=3-0 turn=4
+16:47:38 [INFO] proxy: rollout_id=3-0 decision=TurnKind.WIPE prepared prompt (5030 tokens), calling sampler (+0.0s)
+16:47:38 [INFO] proxy: rollout_id=3-3 sampler returned 1 completions (+0.8s)
+16:47:38 [INFO] proxy: rollout_id=3-3 parsed completion: 63 output_tokens, content='I have successfully deleted the 4 customers in the "Won" stage, interested in "Services," and assigned to Lena Schmidt from CRM. The names of the deleted customers were:\n\n1.  Cameron Brown\n2.  Parker ', tool_calls=None
+16:47:38 [INFO] proxy: rollout_id=3-3 responding (+0.8s total)
+16:47:38 [INFO] rollout_fn: rollout_id=3-3 got response (+5.0s) reward=1.0
+16:47:39 [INFO] proxy: rollout_id=3-1 sampler returned 1 completions (+0.7s)
+16:47:39 [INFO] proxy: rollout_id=3-1 parsed completion: 40 output_tokens, content='', tool_calls=[{'type': 'function', 'id': 'call_757e3aac066b4f64a8ffaaf0', 'function': {'name': 'customer_relationship_manager_delete_customer', 'arguments': '{"customer_id": "00000047"}'}}]
+16:47:39 [INFO] proxy: rollout_id=3-1 responding (+0.8s total)
+16:47:39 [INFO] proxy: received request rollout_id=3-1 turn=5
+16:47:39 [INFO] proxy: rollout_id=3-1 decision=TurnKind.WIPE prepared prompt (5029 tokens), calling sampler (+0.0s)
+16:47:39 [INFO] proxy: rollout_id=3-0 sampler returned 1 completions (+1.2s)
+16:47:39 [INFO] proxy: rollout_id=3-0 parsed completion: 140 output_tokens, content='I have deleted all of Lena Schmidt\'s customers who were in the "Won" status and interested in "Services" from the CRM. The deleted customers were:\n\n1.  **Cameron Brown** (ID: 00000009)\n2.  **Parker Ga', tool_calls=None
+16:47:39 [INFO] proxy: rollout_id=3-0 responding (+1.2s total)
+16:47:39 [INFO] rollout_fn: rollout_id=3-0 got response (+6.1s) reward=1.0
+16:47:39 [INFO] proxy: rollout_id=3-1 sampler returned 1 completions (+0.6s)
+16:47:39 [INFO] proxy: rollout_id=3-1 parsed completion: 31 output_tokens, content='All customers assigned to Lena Schmidt who were in the "Won" stage and interested in "Services" have been successfully deleted from the CRM.', tool_calls=None
+16:47:39 [INFO] proxy: rollout_id=3-1 responding (+0.6s total)
+16:47:40 [INFO] rollout_fn: rollout_id=3-1 got response (+6.2s) reward=1.0
+16:48:06 [INFO] Hotloading BASE (non-delta) snapshot 'step-2-31912a1e' to deployment 'qwen3p5-27b-1787960426'
+16:48:07 [INFO] Waiting for hotload (identity=step-2-31912a1e)...
+16:48:07 [INFO] Hotload: stage=idle, current=step-1-31912a1e, loading=step-2-31912a1e, ready=True, loaded_adapters=[] (0s)
+16:48:12 [INFO] Hotload: stage=updating, current=step-1-31912a1e, loading=step-2-31912a1e, ready=False, loaded_adapters=[] (5s)
+16:48:18 [INFO] Hotload: stage=updating, current=step-1-31912a1e, loading=step-2-31912a1e, ready=False, loaded_adapters=[] (10s)
+16:48:23 [INFO] Hotload: stage=updating, current=step-1-31912a1e, loading=step-2-31912a1e, ready=False, loaded_adapters=[] (16s)
+16:48:28 [INFO] Hotload: stage=updating, current=step-1-31912a1e, loading=step-2-31912a1e, ready=False, loaded_adapters=[] (21s)
+16:48:34 [INFO] Hotload complete: step-2-31912a1e (took 26s)
+16:48:34 [INFO] Rollout 2 | Reward raw 0.375 filtered 0.375 | Samples raw 8 filtered 8 | Filter 0.0% | RefKL 0.0002
+16:48:34 [INFO] Saving DCP checkpoint 'step-2'...
+16:48:37 [INFO] DCP checkpoint 'step-2' saved (3.6s)
+16:48:54 [INFO] Sampler checkpoint 'step-2' already promotable on control plane — skipping redundant save.
+16:48:54 [INFO] Async RL training complete: 2 steps (2 new in this run)
+16:48:55 [INFO] Scaled deployment to zero: qwen3p5-27b-1787960426
+16:48:55 [INFO] Deleted trainer job: training-api-service-63d6b0de
+
+[exited with code 0]
