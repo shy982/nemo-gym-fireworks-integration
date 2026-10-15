@@ -1,12 +1,15 @@
 # Results
 
-The rows in the first table below used the *same, unmodified* integration code
-(as carried by this repo's patches at the time, before they were upstreamed;
-those logs predate the final upstreamed version, so e.g. the "Turn linkage"
-counts refer to the earlier hash-based tracker) -- only the `--resources-server`/`--agent-name`/`--dataset-path`
-and `--base-model`/`--tokenizer-model`/`--training-shape-id` flags changed
-between rows. See `DESIGN.md` for what's actually being held constant here and
-why that's the point.
+**Read this first.** The table below and the per-step detail come from earlier
+runs, made with this repo's patches before they were upstreamed and before
+Fireworks reworked the example onto the TITO runtime (so, for example, the
+"Turn linkage" counts refer to the earlier hash-based tracker). Within that
+table, every row used the same, unmodified integration code -- only the
+`--resources-server`/`--agent-name`/`--dataset-path` and
+`--base-model`/`--tokenizer-model`/`--training-shape-id` flags changed between
+rows. See `DESIGN.md` for what is being held constant and why that is the
+point. **What is on cookbook `main` today is covered by the 2026-10-14 section
+below, which has only one environment/model combination.**
 
 | Environment | Agent harness | Model | Steps | Reward split | Turn linkage | Log |
 |---|---|---|---|---|---|---|
@@ -21,11 +24,40 @@ against NeMo Gym's live verifier, real GRPO optimizer steps with weight
 hotload back into the live deployment, clean automatic teardown (verified
 against the Fireworks API afterward, not just trusted from the log).
 
-## Re-validation on the upstreamed code (2026-10-08)
+## Current cookbook `main` (TITO runtime), 2026-10-14
 
-After both pieces landed upstream, the cookbook example (as merged, minus the
-since-removed serverless path) was re-run live against NeMo Gym `main` at
-`412bd3bf` (which includes #3783) with **no patches applied to either repo**.
+Runs replayed from the notebook's own code cells, from a fresh clone of this
+repo, with fresh clones of `fw-ai/cookbook` (`4dfdb6e`) and NeMo Gym (`8260ca6`)
+-- no patches to either. Dedicated `qwen3p5-27b`, `example_multi_step`, 5 rows,
+4 completions per prompt, 2 prompt groups per step, 3 optimizer steps. This is
+the first time the example was run after Fireworks reworked it onto the SDK's
+TITO runtime; **only this environment/model combination has been run on it.**
+
+| Run | Setup | Outcome |
+|---|---|---|
+| 1 | `--max-completion-tokens 256`, dataset as shipped | Completed 3 steps, but **mean reward 0.000 on every step**. Most rollouts were 1 turn with exactly 256 trained tokens (truncated before a valid tool call); Gym logged `parallel tool calls` (10) and `tito_model_malformed_output` (6) rejections early on. No learning signal. |
+| 2 | 1024 tokens, dataset as shipped | **Aborted: circuit breaker tripped** (`consecutive=5, rolling=5/5`) on 5 `/run` 500s. 26 `parallel tool calls` rejections, 0 malformed. Reproduces a failure reported from an independent fresh environment. |
+| 3 | 1024 tokens, dataset copy without `parallel_tool_calls` (what the notebook does now) | **Completed 3 steps, 0 rejections, 0 rollout failures.** Mean reward **0.75 -> 0.75 -> 1.00** (8, 8, 4 samples). 16 of 20 rollouts scored 1.0, 4 scored 0.0; 16 were 3-turn rollouts, 3 were 1-turn, 1 was 4-turn, each turn one training segment. |
+
+Before any of that, a separate startup failure had to be fixed in the
+notebook: `tokenizer does not match TITO certification` (both Qwen3.5-27B and
+Qwen3.5-35B-A3B), caused by the example loading its tokenizer through
+`AutoTokenizer`. See `DESIGN.md`'s "Tokenizer loading". Checked offline that
+all of Qwen3.5-27B, Qwen3.5-35B-A3B and its FP8 variant match the
+certification when loaded with `load_sidecar_tokenizer`.
+
+Run 3 confirms the mechanics on the TITO version (rollouts, hotload every
+step, checkpointing, teardown), not learning: three steps on five rows, and
+the step-to-step reward change is within noise. Trainer jobs were deleted and
+deployments scaled to zero and deleted afterwards (checked against the
+Fireworks API; deployment deletion can take tens of minutes to finish, at 0
+replicas).
+
+## Earlier version of the cookbook PR, 2026-10-08
+
+These ran on my version of the example (cookbook#704 head `605d9e61`, before
+Fireworks reworked it onto the TITO runtime), against NeMo Gym `main` at
+`412bd3bf` (which includes #3783) with no patches to either repo.
 Dedicated `qwen3p5-27b`, 4 rows x 2 completions per prompt, 2 optimizer steps:
 
 | Environment | Flags | Rollouts / proxy calls | Turns -> training segments | Mean reward per step |
@@ -34,12 +66,12 @@ Dedicated `qwen3p5-27b`, 4 rows x 2 completions per prompt, 2 optimizer steps:
 | `workplace_assistant` | -- | 8 rollouts | 29 -> 29 | 0.50 -> 0.75 |
 | `toolsandbox` | `--exclude-user-simulator` | 33 proxy calls, 11 excluded as user-simulator | 22 trained | 0.915 -> 0.899 |
 
-The proxy was spied to confirm the recipe's `top_p=1.0, top_k=0` reach the
-sampler. All trainer jobs and deployments were torn down afterwards (checked
-against the Fireworks API). Two-step runs at this scale confirm the mechanics,
-not learning: reward movement between steps is noise-level. The notebook's
-rewritten setup path (no patches) was not re-run end to end; the commands it
-issues are the ones above.
+The proxy was spied to confirm the recipe's `top_p=1.0, top_k=0` reached the
+sampler. These do **not** describe what is on cookbook `main` today; the
+`workplace_assistant` and `toolsandbox` rows in particular have not been
+re-run on the TITO version, and `workplace_assistant` may hit the
+parallel-tool-call rule much more (27 tools). Two-step runs at this scale
+confirm mechanics, not learning.
 
 ## Per-step detail
 

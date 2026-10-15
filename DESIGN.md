@@ -46,8 +46,8 @@ straight to the live NeMo Gym agent harness (setting NeMo Gym's own
 `_ng_task_index`/`_ng_rollout_index` correlation fields itself plus a unique
 `_ng_rollout_id` per call, and passing the full dataset row through -- this is the same contract
 `rollout_collection.py` inside NeMo Gym itself uses), then drains the
-matching `proxy.py` session into a `RolloutRun`/`RolloutSample` for the
-recipe.
+matching `proxy.py` session into a `RolloutRun` of one or more training
+segments for the recipe.
 
 ## The stable contract: two integration points, everything else is config
 
@@ -58,7 +58,11 @@ Gym environment to plug in -- switching environments is
 `--resources-server`/`--agent-name`/`--dataset-path`, switching models is
 `--base-model`/`--tokenizer-model`/`--training-shape-id`. No code changes
 between the runs in `RESULTS.md`. It targets the Dedicated
-trainer + deployment recipe (`async_rl_loop`) only.
+trainer + deployment recipe (`async_rl_loop`) only, and it runs on the SDK's
+TITO runtime (see "Trajectory tracking" below), so it needs a **certified
+tokenizer** -- `--tokenizer-model` is required and must match a certification in
+`training/renderer/tito/registry.py` (Qwen3.5 is certified; other models are
+listed there).
 
 **2. NeMo Gym's `correlate_via_user_field` option.** Every concurrent
 rollout needs its own proxy session, so the proxy must know which rollout each
@@ -106,7 +110,7 @@ was causing the raw client to hang -- switching to it (plus moving to the
 Dedicated trainer+deployment path, since `DeploymentSampler` is built for
 that path, not the serverless one) resolved it.
 
-**Trajectory tracking: rollout-session identity, not content hashing.**
+**Trajectory tracking: from content hashing, to rollout identity, to SDK-verified token lineage.**
 `proxy.py` needs to recognize when an incoming request is turn N+1 of an
 in-progress rollout rather than a fresh one. The first approach
 (`training.utils.rl.rollout.MessageTrajectoryAssembler`, built for callers
@@ -134,43 +138,70 @@ every turn; `example_multi_step`'s 2-tool tasks let the model skip it often
 enough to occasionally match by chance, which is why the bug looked
 environment-specific rather than universal.
 
-**Where it ended up.** Two fixes, both live-validated (see `RESULTS.md`):
-(1) `train.py` sets `uses_reasoning_parser: true` on the generated
-`env.yaml` -- an independent correctness fix, since without it the model's
-reasoning was silently discarded from NeMo Gym's own trajectory history on
-*every* run using this proxy, not just this bug. (2) The proxy trusts
-rollout-session identity and does not compare message hashes at all:
-`simple_agent`'s episode loop (`responses_api_agents/simple_agent/app.py`) is
-strictly sequential per rollout and never forks or rewrites history, so any
-request against an in-progress session is necessarily a continuation of that
-session's last turn. Each rollout's history is therefore **append-only** (the
-upstreamed `RolloutSession` is a plain chain over `DeploymentTrainingSession`),
-and harnesses that fork or rewrite history are unsupported. When a turn's
-prompt is not a token-prefix of the previous prompt + output, the rollout is
-split into several training segments rather than silently truncated; all
-segments are returned, and the per-rollout log line reports turns, segments
-and trained tokens.
+**Where it ended up: the SDK's TITO runtime owns lineage.** The first
+upstream version of this example (my cookbook#704) settled on rollout-session
+identity -- an append-only per-rollout history -- plus `uses_reasoning_parser:
+true` in the generated `env.yaml` (an independent correctness fix: without it
+the model's reasoning was silently dropped from NeMo Gym's own trajectory
+history on every run). Fireworks then reworked the example on top of the SDK's
+TITO runtime (`TITOSidecar`, `TITOTrajectoryEndpoint`), and that is what is on
+cookbook `main` now. The division of labor:
 
-**Sampling follows the recipe, not the request.** The proxy samples with
-`RolloutSetup.sample_kwargs` (temperature, `top_p=1.0`, `top_k=0`,
-`max_seq_len`, ...) so the proxy's samples are on-policy exactly as the recipe
-configures them. A per-request `temperature`/`top_p` from NeMo Gym is ignored,
-and a request's `max_tokens` can only lower `--max-completion-tokens`. The
-reported `finish_reason` comes from the sampler (`length` when the cap was
-hit), and `usage` carries real token counts.
+- **`proxy.py` (`RecordingChatProxy`)** is a thin OpenAI-compatible shim that
+  Gym's model server points at. It takes the rollout id from the `user` field
+  (HTTP 400 if missing, 410 if the session is unknown or already closed), drops
+  per-request `temperature`/`top_p`/`top_k` so the recipe's on-policy defaults
+  (`RolloutSetup.sample_kwargs`) are authoritative, rejects streaming, and
+  forwards the call to that rollout's own sidecar endpoint (a per-trajectory
+  URL with its own bearer token).
+- **The sidecar** owns exact-token replay, context and output budgets,
+  sampler affinity, and lineage. A rollout id only correlates calls; the
+  sidecar verifies that each new prompt actually continues the previous token
+  history. On drift it starts a new training segment instead of overwriting
+  sampled tokens, so one rollout can yield several segments, all returned.
+- **Sessions admit only active rollouts.** The recipe registers a session
+  before calling Gym and closes admission before collecting it; a failed or
+  timed-out `/run` abandons the trajectory and cancels in-flight sampling, so
+  nothing leaks across retries. Rollout ids are explicit and unique per call
+  (`_ng_rollout_id`).
+- **Certification.** The renderer is admitted only if the tokenizer's
+  serialized contract (backend, chat template, special tokens) matches a
+  pinned fingerprint. Tool-call parsing and rendering moved into the
+  certified renderer, which replaces the tool-call formatting shim my version
+  of the proxy carried.
 
-**Failure handling.** If `/run` errors, times out, or returns no reward,
-`rollout_fn` releases that rollout's proxy session before re-raising, so
-nothing leaks across retries. `gym env start` readiness is polled against the
-head server (`/server_instances`) with a configurable timeout
-(`--gym-start-timeout-s`, default 900s -- a first start on a fresh checkout
-builds one venv per server), and the process is stopped if startup fails.
+The earlier hash-comparison and append-only-chain code is gone from the
+example; the history above is kept because it explains *why* identity, not
+message content, has to be the primary signal.
 
-**Tool-call formatting fix.** `tinker_cookbook`'s renderer emits
-`tool_calls[].id = None` and `function.arguments` as a parsed dict, not a
-JSON string. NeMo Gym's own strict OpenAI-schema validation correctly
-rejects both -- meaning every real tool call the model attempted was
-silently 500ing until `proxy.py` normalizes the shape (`_fix_tool_calls_for_openai`).
+**Two behaviors of the current example that matter in practice** (both found
+running it, both worked around in the notebook; see `RESULTS.md`):
+
+1. **`parallel_tool_calls: false` is enforced by failing the rollout.** TITO
+   renders the default parallel policy, so when a dataset row sets
+   `parallel_tool_calls: false` the proxy checks the response and returns 502
+   (`model returned parallel tool calls`) if the model emitted more than one
+   call. Gym retries three times and then fails the rollout, and five failed
+   rollouts in a row trip the recipe's circuit breaker. Qwen3.5 often calls
+   several tools in one turn, so on `example_multi_step` (whose rows set the
+   flag) training aborted. Gym's `SimpleAgent` executes every call in a
+   turn, so the notebook trains on a copy of the dataset without the flag.
+2. **Small completion caps turn into rejected rollouts.** At
+   `--max-completion-tokens 256`, Qwen3.5 (which thinks first) usually ran out
+   of tokens before a valid tool call: rewards were 0.0 on every step and the
+   renderer rejected truncated output (`tito_model_malformed_output`). The
+   notebook uses 1024.
+
+**Tokenizer loading (a cookbook bug the notebook works around).** `train.py`
+builds the tokenizer with `get_tokenizer()` (the `AutoTokenizer` path). On
+transformers >= 5.9 that can rebuild a different tokenizer backend, so its
+fingerprint never matches the certification and the example fails at startup
+with `tokenizer does not match TITO certification`. Loading the same
+Hugging Face snapshot with the sidecar's own `load_sidecar_tokenizer` matches
+for Qwen3.5-27B and Qwen3.5-35B-A3B (checked offline). The notebook launches
+`train.py` through a small runner that swaps that loader in; the example's
+files are untouched. Remove the runner once the example loads the tokenizer
+that way itself.
 
 **Filtering out `toolsandbox`'s internal user-simulator, without a second model server (opt-in).**
 `toolsandbox` is the first environment validated with a genuinely different
@@ -198,8 +229,11 @@ config to keep in sync.
 Because the heuristic would misclassify any environment whose *agent* turns
 legitimately carry no tools (plain single-turn tasks), the upstreamed version
 applies it **only when asked**: pass `--exclude-user-simulator` for
-`toolsandbox`. It is off by default. Live-validated on the merged code: 33
-proxy calls, 11 excluded, 22 agent turns trained (see `RESULTS.md`).
+`toolsandbox`. It is off by default. In the current example the
+heuristic is the sidecar's `call_classifier` (excluded calls are classed
+`auxiliary`). It was live-validated on the pre-TITO version (33 proxy calls,
+11 excluded, 22 agent turns trained, see `RESULTS.md`); it has **not** been
+re-run on the TITO version.
 
 **A second, independent Fireworks API surface: Deployments.** Everything
 above uses `async_rl_loop.main()`'s SDK-managed rollout deployment --
@@ -237,16 +271,21 @@ issues at zero cost.
 
 ## Open items
 
-- **TITO integration.** The cookbook's SDK-side exact-token path (`TITOSidecar`)
-  is environment-local: one endpoint plus bearer token per trajectory, with a
-  drift policy (`new_segment`/`reject`). NeMo Gym's shared model server tags
-  rollouts with the `user` field instead, so using it would need a small adapter
-  that routes by `user` to per-rollout TITO trajectories. Not built; the proxy's
-  own recording works today.
+- **Re-validate the rest on the TITO version.** Only `example_multi_step` on
+  Qwen3.5-27B has been run on current cookbook `main`. The MoE model,
+  `workplace_assistant` (27 tools -- likely more parallel calls) and
+  `toolsandbox` (`--exclude-user-simulator`) were validated on the earlier
+  version only.
+- **Report/fix upstream:** the `get_tokenizer` fingerprint mismatch, and the
+  rollout-failing parallel-tool-call rule (a model that makes parallel calls
+  should arguably be a recoverable sample, not a failure that feeds the
+  circuit breaker). My fix for the first is on a local branch only, not yet
+  proposed.
 - **Serverless.** The example is Dedicated-only. A serverless variant
-  (`async_rl_loop_serverless`) was tried and removed from the upstream PR:
-  tokenizer remote-code handling and intermittent Gym-side rollout hangs were
-  unresolved.
+  (`async_rl_loop_serverless`) was tried against the earlier version and
+  removed from the upstream PR: tokenizer remote-code handling and
+  intermittent Gym-side rollout hangs were unresolved, and it has not been
+  tried on the TITO runtime.
 - ~~Fix trajectory-tracking turn linkage~~ -- done, see `RESULTS.md`.
 - ~~Validate against a genuinely different agent harness~~ -- done
   (`toolsandbox`/`toolsandbox_agent`), see `RESULTS.md`.

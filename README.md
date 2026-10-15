@@ -16,20 +16,24 @@ framework.
 The bridge itself now lives upstream: it is the
 [`training/examples/rl/nemo_gym/`](https://github.com/fw-ai/cookbook/tree/main/training/examples/rl/nemo_gym)
 example in [`fw-ai/cookbook`](https://github.com/fw-ai/cookbook) (contributed in
-[#704](https://github.com/fw-ai/cookbook/pull/704)), and NeMo Gym's side is the
+[#704](https://github.com/fw-ai/cookbook/pull/704), then reworked by Fireworks onto
+the SDK's TITO runtime), and NeMo Gym's side is the
 `correlate_via_user_field` option in [`NVIDIA-NeMo/Gym`](https://github.com/NVIDIA-NeMo/Gym)
 ([#3783](https://github.com/NVIDIA-NeMo/Gym/pull/3783)). **No patches are needed
 against either project.** This repo is the notebook, the narrative, and the evidence.
 
 The point of this repo is that switching environment or model is a **config
-change**, not a new codebase. The same integration code and one notebook have been
-run, unmodified, against two structurally different models (dense and MoE)
-and **three** structurally different NeMo Gym environments -- including one
-(`toolsandbox`) with a genuinely different agent harness and continuous
-reward, not just a different dataset -- plus a second, independent Fireworks
-API surface (Deployments: promote a checkpoint, deploy it on-demand, query
-it, compare against the base model). See [`RESULTS.md`](RESULTS.md) for
-every run and exact numbers.
+change**, not a new codebase.
+
+**What has actually been validated.** On the *current* cookbook `main` (the
+TITO-based example), the notebook was run end to end on one combination:
+Dedicated `qwen3p5-27b` x `example_multi_step`, 3 steps, mean reward
+0.75 -> 0.75 -> 1.00. Earlier versions of the example (the patched one this repo
+used to carry) were also run against two models (dense and MoE) and three
+environments, including `toolsandbox` (a different agent harness with a
+continuous reward) and a Deployments-API base-vs-fine-tuned comparison; those
+have **not** been re-run on the current example. [`RESULTS.md`](RESULTS.md) lists
+every run with exact numbers and says which version each used.
 
 ## Start here
 
@@ -74,13 +78,26 @@ In this repo:
 | [`RESULTS.md`](RESULTS.md) | Run evidence |
 | `runs/` | Sanitized full logs from real, confirmed runs, referenced from `RESULTS.md` |
 
+Two problems in the current cookbook example are worked around in the notebook
+rather than patched (see [`DESIGN.md`](DESIGN.md) and `RESULTS.md`):
+
+- **Tokenizer fingerprint mismatch.** `train.py` loads its tokenizer in a way
+  that fails the TITO certification at startup. The notebook launches `train.py`
+  through a small runner that loads the certified tokenizer instead.
+- **Parallel tool calls fail the rollout.** A dataset row with
+  `parallel_tool_calls: false` makes the proxy reject any model turn with more
+  than one tool call, which trips the circuit breaker on models that make
+  several calls. The notebook trains on a copy of the dataset without that flag
+  and uses `--max-completion-tokens 1024` (256 truncates Qwen3.5 mid-thought).
+
 `train.py` writes `env.yaml` in the NeMo Gym checkout (and refuses to
 overwrite one it didn't generate), so use a dedicated clone -- the notebook's
 `nemo-gym/` is one.
 
 ## Requirements
 
-- A Fireworks account with billing enabled and an API key.
+- A Fireworks account with billing enabled and an API key, with access to
+  Dedicated training (trainer shapes such as `qwen3p5-27b-64k-lora`).
 - `git` on `PATH`. Everything else (`uv`, both repos, both Python
   environments) is bootstrapped by the notebook itself.
 - A machine that can run a Fireworks Dedicated training deployment for the
@@ -102,7 +119,11 @@ free-dry-run tip before spending anything live.
   `RESULTS.md` is likewise a pipeline check, not a quality eval (rank-8 LoRA,
   3 steps, a training-set row). See the notebook's "Scaling up beyond the
   smoke test" section and `DESIGN.md`'s open items for how to go further.
-- Harnesses that fork or rewrite conversation history are unsupported: the
-  proxy treats each rollout's history as append-only.
+- Only certified tokenizers work with the current example (Qwen3.5 among
+  them; the list is in the cookbook's `training/renderer/tito/registry.py`).
+- Only `example_multi_step` on `qwen3p5-27b` has been run on the current
+  example. `workplace_assistant`, `toolsandbox` and the MoE model are not
+  re-validated; `workplace_assistant` (27 tools) may hit the parallel-call rule
+  harder.
 - `toolsandbox`'s full scenario set (hundreds+ of generated scenarios) is
   unbuilt/unused here -- only its 5-row smoke set has been run.
